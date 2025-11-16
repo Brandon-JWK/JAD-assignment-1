@@ -1,12 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
+<footer class="text-center mt-5 py-3 bg-light">
+    <p>© 2025 Silver Care. All Rights Reserved.</p>
+</footer>
 
 </body>
 </html>
