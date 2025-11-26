@@ -13,12 +13,14 @@
 
     <h2><%= s.getServiceName() %></h2>
 
-    <img src="<%= s.getImagePath() %>" width="250" class="mt-3">
+    <img src="<%= request.getContextPath() + "/" + s.getImagePath() %>" width="250" alt="<%= s.getServiceName() %>"/>
 
     <p class="mt-3"><%= s.getServiceDesc() %></p>
     <p><strong>Price: </strong>$<%= s.getPrice() %></p>
 
-    <a href="#" class="btn btn-primary">Add to Booking (Assignment 2)</a>
+    <a href="<%= request.getContextPath() %>/CartController?action=add&serviceId=<%= s.getServiceId() %>" class="btn btn-primary">Add to Cart</a>
+
+
 
 </div>
 

@@ -1,6 +1,6 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ include file="../includes/header.jsp" %>
-<%@ include file="../includes/navbar.jsp" %>
+
 <div class="container mt-5" style="max-width: 400px;">
     <h2 class="text-center mb-4">Admin Login</h2>
 

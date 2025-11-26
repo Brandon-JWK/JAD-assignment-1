@@ -24,7 +24,7 @@
 
         <!-- Main Content -->
         <div class="col-md-10">
-            <div class="container mt-4">
+            <div class="admin-content">
                 <h2>Edit Client</h2>
 
                 <form action="adminUpdateClient.jsp" method="post">

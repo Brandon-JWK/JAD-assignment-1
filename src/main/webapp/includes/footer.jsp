@@ -1,3 +1,3 @@
-<footer class="text-center mt-5 py-3 bg-light">
+<footer class="footer text-center py-3">
     <p>© 2025 Silver Care. All Rights Reserved.</p>
 </footer>

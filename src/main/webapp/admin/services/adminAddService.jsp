@@ -2,6 +2,9 @@
 <%@ include file="../../includes/header.jsp" %>
 <%@ include file="../../includes/navbar.jsp" %>
 <%@ include file="../../includes/adminSessionCheck.jsp" %>
+<%@ include file="../../includes/sidebar.jsp" %>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/admin.css?v=1">
+
 <%
     CategoryDao dao = new CategoryDao();
     List<Category> categories = dao.getAllCategories();
@@ -12,7 +15,7 @@
         <%@ include file="../../includes/sidebar.jsp" %>
 
         <div class="col-md-9">
-            <div class="container mt-5" style="max-width: 600px;">
+            <div class="admin-content">
                 <h2>Add New Service</h2>
                 <form action="<%=request.getContextPath()%>/ServiceController" method="post">
                     <input type="hidden" name="action" value="addService"/>

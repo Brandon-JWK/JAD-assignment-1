@@ -1,0 +1,203 @@
+/* --------------------------------------
+   GLOBAL VARIABLES
+----------------------------------------- */
+:root {
+    --primary: #6C5CE7;
+    --primary-dark: #4F3CD1;
+    --primary-light: #A29BFE;
+
+    --gradient-1: linear-gradient(135deg, #6C5CE7, #00BBFF);
+    --gradient-2: linear-gradient(135deg, #6C5CE7, #A29BFE);
+    --gradient-3: linear-gradient(135deg, #6C5CE7, #6EE7B7);
+
+    --surface-1: #F5F7FB;
+    --surface-2: #F0F3FF;
+    --surface-3: #E8EDFF;
+
+    --text-dark: #1A1A1A;
+    --text-light: #FFFFFF;
+    --text-muted: #6B7280;
+
+    --radius: 14px;
+    --shadow-md: 0 6px 18px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Smooth global animation */
+* {
+    transition: 0.25s ease;
+}
+
+/* ======================================================
+   NAVBAR — Gradient, Floating, Modern
+   ====================================================== */
+.custom-navbar {
+    background: var(--gradient-2);
+    padding: 16px 40px !important;
+    border: none;
+    box-shadow: var(--shadow-md);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.custom-navbar .navbar-brand {
+    color: var(--text-light) !important;
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+.custom-navbar .nav-link {
+    color: #f1f1f7 !important;
+    font-weight: 500;
+    margin-left: 26px;
+    padding-bottom: 4px;
+    position: relative;
+}
+
+/* Hover underline animation */
+.custom-navbar .nav-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    height: 3px;
+    width: 0;
+    background: #fff;
+    border-radius: 20px;
+    transition: width 0.2s ease-in-out;
+}
+
+.custom-navbar .nav-link:hover::after {
+    width: 100%;
+}
+
+/* Rounded profile & logout buttons */
+.custom-navbar .btn,
+.custom-navbar .user-info,
+.custom-navbar .user-avatar {
+    border-radius: 50px;
+}
+
+/* ======================================================
+   SIDEBAR — Dynamic Dashboard UI
+   ====================================================== */
+.sidebar {
+    width: 250px;
+    height: 100vh;
+    background: var(--surface-2);
+    box-shadow: var(--shadow-lg);
+    padding: 30px 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border-right: 1px solid rgba(0,0,0,0.05);
+}
+
+.sidebar-title {
+    padding-left: 24px;
+    margin-bottom: 20px;
+    color: var(--primary-dark);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.sidebar .nav-link {
+    padding: 14px 26px;
+    font-size: 15px;
+    color: var(--text-dark) !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: var(--radius);
+    margin: 8px 12px;
+    background: transparent;
+    font-weight: 500;
+    position: relative;
+}
+
+/* Hover */
+.sidebar .nav-link:hover {
+    background: var(--gradient-1);
+    color: #fff !important;
+    box-shadow: var(--shadow-md);
+    transform: translateX(6px);
+}
+
+/* Active */
+.sidebar .nav-link.active {
+    background: var(--primary);
+    color: #fff !important;
+    font-weight: 600;
+    box-shadow: var(--shadow-md);
+}
+
+/* Active indicator bar */
+.sidebar .nav-link.active::before {
+    content: "";
+    position: absolute;
+    left: -6px;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background: #00d4ff;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Logout link */
+.sidebar .logout-link {
+    color: #ff4d4d !important;
+    font-weight: 600;
+}
+
+.sidebar .logout-link:hover {
+    background: rgba(255, 77, 77, 0.2) !important;
+}
+
+/* ======================================================
+   CONTENT WRAPPER
+   ====================================================== */
+.admin-layout {
+    margin-left: 40px;
+    padding: 40px;
+    min-height: 100vh;
+    background: var(--surface-1);
+    animation: fadeUp 0.5s ease;
+}
+
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ======================================================
+   FOOTER — Sticky Glassmorphism
+   ====================================================== */
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.footer {
+    margin-top: auto;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(12px);
+    border-top: 1px solid rgba(0,0,0,0.05);
+    padding: 24px 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+}
