@@ -8,45 +8,43 @@
   <!-- Right Links -->
   <ul class="navbar-nav ms-auto align-items-center">
 
-    <!-- PUBLIC -->
+    <!-- PUBLIC (ALWAYS SHOW) -->
     <li class="nav-item">
-      <a class="nav-link" href="<%=request.getContextPath() %>/public/serviceCategories.jsp">Services</a>
+      <a class="nav-link" href="<%=request.getContextPath() %>/public/serviceCategories.jsp">
+        Services
+      </a>
     </li>
 
-    <!-- CLIENT LOGGED IN -->
     <%
-      Object client = session.getAttribute("client");
-      if (client != null) {
+        Object client = session.getAttribute("client");
+        Object admin  = session.getAttribute("admin");
     %>
-      <li class="nav-item">
-        <a class="nav-link" href="<%=request.getContextPath() %>/client/clientDashboard.jsp">Dashboard</a>
-      </li>
 
-      <!-- CLEANER logout styling -->
-      <li class="nav-item">
-        <form action="<%=request.getContextPath() %>/AuthController" method="post" class="d-inline">
-          <input type="hidden" name="action" value="logout">
-          <button class="btn btn-outline-danger btn-sm ms-2">Logout</button>
-        </form>
-      </li>
-    <% } else { %>
+    <!-- CLIENT: login or dashboard -->
+    <li class="nav-item">
+      <% if (client != null) { %>
+        <a class="nav-link" href="<%=request.getContextPath() %>/client/clientDashboard.jsp">
+          Client Dashboard
+        </a>
+      <% } else { %>
+        <a class="nav-link" href="<%=request.getContextPath() %>/client/clientLogin.jsp">
+          Client Login
+        </a>
+      <% } %>
+    </li>
 
-      <!-- NOT LOGGED IN -->
-      <li class="nav-item">
-        <a class="nav-link" href="<%=request.getContextPath() %>/client/clientLogin.jsp">Login</a>
-      </li>
-
-    <% } %>
-
-    <!-- ADMIN -->
-    <%
-      Object admin = session.getAttribute("admin");
-      if (admin != null) {
-    %>
-      <li class="nav-item">
-        <a class="nav-link admin-link" href="<%=request.getContextPath() %>/admin/adminDashboard.jsp">Admin</a>
-      </li>
-    <% } %>
+    <!-- ADMIN: login or dashboard -->
+    <li class="nav-item">
+      <% if (admin != null) { %>
+        <a class="nav-link admin-link" href="<%=request.getContextPath() %>/admin/adminDashboard.jsp">
+          Admin Dashboard
+        </a>
+      <% } else { %>
+        <a class="nav-link admin-link" href="<%=request.getContextPath() %>/admin/adminLogin.jsp">
+          Admin Login
+        </a>
+      <% } %>
+    </li>
 
   </ul>
 </nav>

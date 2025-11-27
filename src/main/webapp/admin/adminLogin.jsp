@@ -1,30 +1,50 @@
 <%@ taglib uri="jakarta.tags.core" prefix="c" %>
 <%@ include file="../includes/header.jsp" %>
+<%@ include file="../includes/navbar.jsp" %>
 
-<div class="container mt-5" style="max-width: 400px;">
-    <h2 class="text-center mb-4">Admin Login</h2>
+<link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/admin.css?v=3">
 
-    <form action="<c:url value='/AuthController' />" method="post">
-        <!-- Hidden input to tell AuthController this is an admin login -->
-        <input type="hidden" name="action" value="adminLogin" />
+<div class="page-wrapper d-flex flex-column">
+    <div class="admin-layout d-flex flex-column flex-grow-1">
 
-        <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" required />
-        </div>
+        <main class="admin-content d-flex justify-content-center">
 
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" required />
-        </div>
+            <div class="admin-form-card mt-5" style="max-width: 420px; width: 100%;">
 
-        <button type="submit" class="btn btn-primary w-100">Login</button>
-    </form>
+                <h2 class="text-center mb-3">Admin Login</h2>
 
-    <!-- Show error message if login fails -->
-    <c:if test="${not empty error}">
-        <div class="alert alert-danger mt-3">${error}</div>
-    </c:if>
+                <form action="<c:url value='/AuthController' />" method="post">
+                    <input type="hidden" name="action" value="adminLogin"/>
+
+                    <!-- Username -->
+                    <div class="form-group">
+                        <label>Username</label>
+                        <input type="text" name="username" class="form-control" required placeholder=" ">
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" name="password" class="form-control" required placeholder=" ">
+                    </div>
+                    
+					<div class="mt-4">
+                    	<button type="submit" class="btn btn-primary w-100">Login</button>
+	                </div>	
+
+                    <!-- Error -->
+                    <c:if test="${not empty error}">
+                        <div class="alert alert-danger mt-3 text-center">
+                            ${error}
+                        </div>
+                    </c:if>
+                </form>
+
+            </div>
+
+        </main>
+
+    </div>
 </div>
 
 <%@ include file="../includes/footer.jsp" %>

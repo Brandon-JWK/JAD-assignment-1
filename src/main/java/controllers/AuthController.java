@@ -55,10 +55,30 @@ public class AuthController extends HttpServlet {
             }
         }
 
-        // LOGOUT
-        if ("logout".equals(action)) {
+        // ADMIN LOGOUT
+        if ("adminLogout".equals(action)) {
             request.getSession().invalidate();
-            response.sendRedirect("public/index.jsp");
+            response.sendRedirect("admin/adminLogin.jsp");
+            return;
         }
+        
+        // LOGOUT (BOTH CLIENT & ADMIN)
+        if ("logout".equals(action)) {
+            HttpSession session = request.getSession(false);
+
+            boolean isAdmin = session != null && session.getAttribute("admin") != null;
+            boolean isClient = session != null && session.getAttribute("client") != null;
+
+            session.invalidate();
+
+            if (isAdmin) {
+                response.sendRedirect("admin/adminLogin.jsp");
+            } else if (isClient) {
+                response.sendRedirect("client/clientLogin.jsp");
+            } else {
+                response.sendRedirect("public/index.jsp"); // fallback
+            }
+        }
+
     }
 }
