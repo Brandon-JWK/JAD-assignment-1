@@ -171,4 +171,95 @@ public class ServiceDao {
             return false;
         }
     }
+    
+    public List<Service> searchFilterPaginate(String keyword, Integer categoryId, int offset, int limit) {
+        List<Service> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM service WHERE 1=1";
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql += " AND service_name LIKE ?";
+        }
+
+        if (categoryId != null) {
+            sql += " AND category_id = ?";
+        }
+
+        sql += " LIMIT ? OFFSET ?";
+
+        try (Connection conn = SQLDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            int index = 1;
+
+            if (keyword != null && !keyword.isEmpty()) {
+                ps.setString(index++, "%" + keyword + "%");
+            }
+
+            if (categoryId != null) {
+                ps.setInt(index++, categoryId);
+            }
+
+            ps.setInt(index++, limit);
+            ps.setInt(index++, offset);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(new Service(
+                    rs.getInt("service_id"),
+                    rs.getString("service_name"),
+                    rs.getString("description"),
+                    rs.getDouble("price"),
+                    rs.getInt("category_id"),
+                    rs.getString("image_path")
+                ));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
+    }
+    
+    public int countServices(String keyword, Integer categoryId) {
+        int count = 0;
+
+        String sql = "SELECT COUNT(*) FROM service WHERE 1=1";
+
+        if (keyword != null && !keyword.isEmpty()) {
+            sql += " AND service_name LIKE ?";
+        }
+
+        if (categoryId != null) {
+            sql += " AND category_id = ?";
+        }
+
+        try (Connection conn = SQLDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            int index = 1;
+
+            if (keyword != null && !keyword.isEmpty()) {
+                ps.setString(index++, "%" + keyword + "%");
+            }
+
+            if (categoryId != null) {
+                ps.setInt(index++, categoryId);
+            }
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                count = rs.getInt(1);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
+
 }
