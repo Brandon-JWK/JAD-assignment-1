@@ -76,7 +76,7 @@ public class CartDao {
         String sql = "DELETE FROM booking WHERE client_id = ?";
 
         try (Connection conn = SQLDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, clientId);
             ps.executeUpdate();
