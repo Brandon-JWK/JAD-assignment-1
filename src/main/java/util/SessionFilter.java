@@ -15,14 +15,15 @@ public class SessionFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpServletResponse response = (HttpServletResponse) res;
 
-        String path = request.getRequestURI();  // e.g. /JAD-Assignment-1/client/clientDashboard.jsp
+        String path = request.getRequestURI();
         HttpSession session = request.getSession(false);
+        
+        String ctx = request.getContextPath();
 
         // Allow static + public + auth pages through
         if (path.contains("/assets/")
                 || path.contains("/includes/")
                 || path.contains("/public/")
-                || path.contains("/errors/")
                 || path.endsWith("clientLogin.jsp")
                 || path.endsWith("registerClient.jsp")
                 || path.endsWith("adminLogin.jsp")
@@ -35,7 +36,7 @@ public class SessionFilter implements Filter {
         // Protect admin
         if (path.contains("/admin/")) {
             if (session == null || session.getAttribute("admin") == null) {
-                response.sendRedirect(request.getContextPath() + "/errors/notAuthorized.jsp");
+                response.sendRedirect(ctx + "/admin/adminLogin.jsp");
                 return;
             }
         }
@@ -43,7 +44,7 @@ public class SessionFilter implements Filter {
         // Protect client
         if (path.contains("/client/")) {
             if (session == null || session.getAttribute("client") == null) {
-                response.sendRedirect(request.getContextPath() + "/errors/sessionError.jsp");
+                response.sendRedirect(ctx + "/client/clientLogin.jsp");
                 return;
             }
         }
