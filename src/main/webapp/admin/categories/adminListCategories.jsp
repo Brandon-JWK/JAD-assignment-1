@@ -50,7 +50,7 @@
                                 <tr>
                                     <td><%= c.getCategoryId() %></td>
 
-                                    <td><span class="category-name"><%= c.getCategoryName() %></span></td>
+                                    <td><%= c.getCategoryName() %></td>
 
                                     <td><%= c.getCategoryDesc() %></td>
 

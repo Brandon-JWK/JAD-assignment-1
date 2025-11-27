@@ -114,9 +114,10 @@
 
 .table th,
 .table.admin-table th {
-    padding: 14px;
-    font-size: 14px;
+    font-size: 18px;
     border: none !important;
+    background: #eef2ff !important;
+    color: #4f3cd1 !important;
 }
 
 .table td,
@@ -250,10 +251,6 @@
 /* --------------------------------------
    TEXT STYLING FOR CLIENTS/CATEGORIES
 ----------------------------------------- */
-.category-name {
-    font-weight: 600;
-    color: #4f3cd1;
-}
 
 .category-desc {
     color: #555;
