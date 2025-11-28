@@ -4,7 +4,6 @@
 
 <%@ include file="../includes/header.jsp" %>
 <%@ include file="../includes/navbar.jsp" %>
-<%@ include file="../includes/adminSessionCheck.jsp" %>
 <%@ include file="../includes/sidebar.jsp" %>
 
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/admin.css?v=3">

@@ -15,6 +15,7 @@
     color: #4f3cd1;
 }
 
+.admin-content h2,
 .admin-form-card h2 {
     font-size: 26px;
     font-weight: 700;
@@ -22,23 +23,11 @@
     margin-bottom: 18px;
 }
 
-.admin-login-page {
-    padding-bottom: 80px; /* keeps footer nicely separated */
+.admin-content h4 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
 }
-
-/* =========================================
-   FULL HEIGHT LOGIN WRAPPER
-========================================= */
-.admin-login-wrapper {
-    min-height: calc(100vh - 120px); 
-    /* 100vh minus approx navbar + footer height */
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* keep card at the top, not centered vertically */
-    padding-top: 40px;
-    padding-bottom: 60px; /* ensures footer is not too close */
-}
-
 
 /* --------------------------------------
    UNIVERSAL BUTTON STYLING
@@ -292,20 +281,6 @@
     border: 3px solid #eef2ff;
 }
 
-/* ======================================================
-   ADMIN FOOTER — MATCH CLIENT FOOTER
-====================================================== */
-.admin-footer {
-    background: #FAF9FF;
-    border-top: 1px solid #EAE6FF;
-    padding: 20px 0;
-    text-align: center;
-    color: #4F3CD1;
-    font-weight: 600;
-    font-size: 14px;
-    margin-top: 40px; /* Adjust spacing above footer */
-}
-
 /* --------------------------------------
    DROPDOWNS
 ----------------------------------------- */
@@ -320,6 +295,7 @@
 /* --------------------------------------
    SUBTLE PAGE FADE-IN
 ----------------------------------------- */
+.admin-content,
 .admin-form-card,
 .admin-table-card {
     animation: adminFadeIn 0.3s ease;

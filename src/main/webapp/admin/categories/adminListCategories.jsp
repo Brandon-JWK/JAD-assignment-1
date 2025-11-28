@@ -1,7 +1,6 @@
 <%@ page import="dao.CategoryDao, java.util.List, models.Category" %>
 <%@ include file="../../includes/header.jsp" %>
 <%@ include file="../../includes/navbar.jsp" %>
-<%@ include file="../../includes/adminSessionCheck.jsp" %>
 <%@ include file="../../includes/sidebar.jsp" %>
 
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/admin.css?v=3">
@@ -25,7 +24,7 @@
                                 flex-wrap flex-md-nowrap align-items-center 
                                 pt-3 pb-2 mb-3 border-bottom">
 
-                        <h1 class="h2">Categories</h1>
+                        <h1 class="h2">Service Categories</h1>
 
                         <a href="<%=request.getContextPath() %>/admin/categories/adminAddCategory.jsp" 
                            class="btn btn-success btn-lg">
