@@ -70,6 +70,79 @@ html, body, button, a, .nav-link {
 }
 
 /* ======================================================
+   CUSTOM NAVBAR TOGGLER (Guaranteed to override Bootstrap)
+====================================================== */
+
+.custom-toggler {
+    border: none !important;
+    padding: 12px 14px !important;
+    border-radius: var(--radius);
+    background: rgba(255,255,255,0.25) !important;
+    box-shadow: var(--shadow-md);
+
+    transition:
+        background 0.4s ease,
+        filter 0.4s ease,
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.3s ease;
+}
+
+/* Hover animation — hue-shift + glow + lift */
+.custom-toggler:hover {
+    background: var(--gradient-1) !important;
+    filter: hue-rotate(35deg) brightness(1.2) !important;
+    transform: translateY(-3px) scale(1.07) !important;
+    box-shadow:
+        0 5px 16px rgba(0,0,0,0.18),
+        0 0 12px rgba(108,92,231,0.45);
+}
+
+/* Active click effect */
+.custom-toggler:active {
+    transform: scale(0.92) !important;
+    filter: hue-rotate(55deg) brightness(1.3) !important;
+}
+
+/* Override the icon to allow hue-shifting */
+.custom-toggler .navbar-toggler-icon {
+    width: 28px;
+    height: 28px;
+    background-image: none !important;
+    position: relative;
+}
+
+/* Draw custom hamburger lines */
+.custom-toggler .navbar-toggler-icon::before,
+.custom-toggler .navbar-toggler-icon::after,
+.custom-toggler .navbar-toggler-icon div {
+    content: "";
+    display: block;
+    width: 26px;
+    height: 3px;
+    margin: 5px 0;
+    background: white;
+    border-radius: 100px;
+    transition: background 0.4s ease, filter 0.4s ease;
+}
+
+/* Hue shift affects bars too */
+.custom-toggler:hover .navbar-toggler-icon::before,
+.custom-toggler:hover .navbar-toggler-icon::after,
+.custom-toggler:hover .navbar-toggler-icon div {
+    filter: hue-rotate(35deg) brightness(1.4);
+}
+
+/* Remove Bootstrap focus ring from navbar toggler */
+.custom-toggler:focus,
+.custom-toggler:focus-visible,
+.custom-toggler:focus:not(:focus-visible),
+.custom-toggler:active:focus,
+.custom-toggler:active {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* ======================================================
    SIDEBAR
 ====================================================== */
 .sidebar {
@@ -196,10 +269,34 @@ html, body, button, a, .nav-link {
         transform: translateX(0);
     }
 
-    .admin-layout {
-        margin-left: 0 !important;
-    }
+	.page-wrapper {
+	    min-height: 100vh;
+	    display: flex;
+	    flex-direction: column;
+	}
+	
+	/* Push content, so footer stays at bottom */
+	.admin-layout {
+	    flex: 1;
+	    display: flex;
+	    flex-direction: column;
+	}
 }
+
+/* Make full-page layout stretch and footer stick to bottom */
+.page-wrapper {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Content grows so footer sits at the bottom only when needed */
+.admin-layout {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
 
 /* ======================================================
    CONTENT WRAPPER

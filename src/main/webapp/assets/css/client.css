@@ -48,56 +48,77 @@
 }
 
 /* ======================================================
-   HEADINGS
+   HEADINGS (Admin-style)
 ====================================================== */
 .client-page .client-page-title {
-    font-size: 32px;
+    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 30px;
     font-weight: 800;
+    letter-spacing: -0.3px;
     color: #4F3CD1;
-    margin-bottom: 15px;
+    margin-bottom: 18px;
 }
 
 /* ======================================================
-   CARD COMPONENT
+   CLIENT CARD (Admin Form Card Style)
 ====================================================== */
 .client-page .client-card {
-    background: #FFF;
-    padding: 25px;
-    border-radius: 16px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
-    border-left: 5px solid #4F3CD1;
-    animation: clientFadeIn 0.35s ease;
+    background: #ded8fa; /* pastel purple like admin */
+    padding: 28px 34px;
+    border-radius: 14px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    border-left: 6px solid #4F3CD1;
+    animation: clientFadeIn 0.3s ease;
 }
 
 /* ======================================================
-   FORM ELEMENTS
+   FORM ELEMENTS (Matches Admin)
 ====================================================== */
-.client-page .client-card input,
+.client-page .client-card .form-label,
+.client-page .client-card label {
+    font-weight: 700;
+    color: #4f3cd1;
+    font-size: 18px;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.client-page .client-card .form-control,
 .client-page .client-card textarea,
 .client-page .client-card select {
     background: #F5F2FF !important;
     border: 1px solid #D8D1FF !important;
-    padding: 12px 14px !important;
+    padding: 12px 15px !important;
     border-radius: 12px !important;
+    font-size: 15px !important;
+    color: #333;
+    transition: 0.25s ease;
 }
 
-.client-page .client-card input:focus,
+.client-page .client-card .form-control:focus,
 .client-page .client-card textarea:focus,
 .client-page .client-card select:focus {
-    border-color: #4F3CD1 !important;
-    box-shadow: 0 0 0 3px rgba(79,60,209,0.20);
+    background: #ece6ff !important;
+    border-color: #6c5ce7 !important;
+    box-shadow: 0 0 0 3px rgba(108,92,231,0.25) !important;
+}
+
+.client-page .client-card textarea {
+    min-height: 130px;
 }
 
 /* ======================================================
-   BUTTONS
+   BUTTONS (Matches Admin)
 ====================================================== */
 .client-page .btn-client-primary {
     background: #6C5CE7 !important;
     color: #FFF !important;
+    padding: 12px 20px !important;
+    font-weight: 600 !important;
     border-radius: 10px !important;
-    padding: 12px;
-    font-weight: 600;
-    transition: 0.2s ease;
+    border: none !important;
+    box-shadow: 0 4px 15px rgba(108,92,231,0.3);
+    transition: 0.25s ease;
 }
 
 .client-page .btn-client-primary:hover {
@@ -108,31 +129,48 @@
 .client-page .btn-client-danger {
     background: #EF4444 !important;
     color: #FFF !important;
+    padding: 12px 20px !important;
+    font-weight: 700 !important;
     border-radius: 10px !important;
-    padding: 12px;
-    font-weight: 600;
+    border: none !important;
+    box-shadow: 0 4px 12px rgba(239,68,68,0.25);
+    transition: 0.25s ease;
+}
+
+.client-page .btn-client-danger:hover {
+    background: #d62828 !important;
+    transform: translateY(-2px);
 }
 
 /* ======================================================
-   TABLES
+   TABLES (Admin Style)
 ====================================================== */
 .client-page .client-table {
+    width: 100%;
     background: #FFF;
     border-radius: 12px;
     overflow: hidden;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.05);
 }
 
-.client-page .client-table thead {
+.client-page .client-table th {
     background: #EEF2FF;
     color: #4F3CD1;
+    padding: 14px;
     font-weight: 700;
+    border: none;
 }
 
-.client-page .client-table tbody tr:nth-child(even) {
+.client-page .client-table td {
+    padding: 14px;
+    border: none;
+}
+
+.client-page .client-table tr:nth-child(even) {
     background: #FAFBFF;
 }
 
-.client-page .client-table tbody tr:hover {
+.client-page .client-table tr:hover {
     background: #F0F2FF;
 }
 
@@ -142,7 +180,7 @@
 @keyframes clientFadeIn {
     from {
         opacity: 0;
-        transform: translateY(5px);
+        transform: translateY(6px);
     }
     to {
         opacity: 1;

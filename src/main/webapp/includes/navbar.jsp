@@ -4,11 +4,15 @@
   <a class="navbar-brand fw-bold" href="<%=request.getContextPath() %>/public/index.jsp">
     Silver Care
   </a>
-  <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-          data-bs-target="#clientNav" aria-controls="clientNav"
-          aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-  </button>
+  <button class="navbar-toggler custom-toggler" type="button" 
+        data-bs-toggle="collapse"
+        data-bs-target="#clientNav"
+        aria-controls="clientNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+   </button>
+
   <!-- Right Links -->
   <div class="collapse navbar-collapse" id="clientNav">
 	 <ul class="navbar-nav ms-auto align-items-center">

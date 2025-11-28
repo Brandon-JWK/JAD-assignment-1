@@ -184,32 +184,35 @@
 						<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 						
 						<script>
-						    const ctx = document.getElementById('serviceChart').getContext('2d');
-						
-						    const chart = new Chart(ctx, {
-						        type: 'bar',
-						        data: {
-						            labels: [
-						                <% for (Category c : categoryDao.getAllCategories()) { %>
-						                    "<%= c.getCategoryName() %>",
-						                <% } %>
-						            ],
-						            datasets: [{
-						                label: "Number of Services",
-						                data: [
-						                    <% for (Category c : categoryDao.getAllCategories()) { %>
-						                        <%= serviceDao.getServicesByCategory(c.getCategoryId()).size() %>,
-						                    <% } %>
-						                ],
-						                backgroundColor: "#4e73df"
-						            }]
-						        },
-						        options: {
-						            responsive: true,
-						            plugins: { legend: { display: true } }
-						        }
-						    });
-						</script>   
+							const ctx = document.getElementById('serviceChart').getContext('2d');
+							
+							const dataSets = [
+							    <% 
+							    for (Category c : categoryDao.getAllCategories()) { 
+							        int count = serviceDao.getServicesByCategory(c.getCategoryId()).size();
+							    %>
+							    {
+							        label: "<%= c.getCategoryName() %>",
+							        data: [<%= count %>],
+							        backgroundColor: "#" + Math.floor(Math.random()*16777215).toString(16)
+							    },
+							    <% } %>
+							];
+							
+							new Chart(ctx, {
+							    type: 'bar',
+							    data: {
+							        labels: ["Services"],
+							        datasets: dataSets
+							    },
+							    options: {
+							        responsive: true,
+							        plugins: {
+							            legend: { display: true }
+							        }
+							    }
+							});
+						</script>
                     </div>		
                 </main>
             </div>

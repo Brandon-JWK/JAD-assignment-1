@@ -140,4 +140,20 @@ public class CartDao {
             return null;
         }
     }
+    
+    // Mark booking as Confirmed
+    public void confirmBooking(int bookingId) {
+        String sql = "UPDATE booking SET status = 'Confirmed' WHERE booking_id = ?";
+
+        try (Connection conn = SQLDB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, bookingId);
+            ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

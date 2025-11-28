@@ -70,7 +70,7 @@ public class ClientController extends HttpServlet {
             int id = Integer.parseInt(request.getParameter("clientId"));
             dao.delete(id);
             request.getSession().invalidate();
-            response.sendRedirect("public/home.jsp");
+            response.sendRedirect("public/index.jsp");
         }
     }
 }
