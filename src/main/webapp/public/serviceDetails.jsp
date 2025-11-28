@@ -9,18 +9,50 @@
 <%@ include file="../includes/header.jsp" %>
 <%@ include file="../includes/navbar.jsp" %>
 
-<div class="container mt-4">
+<div class="client-page">
 
-    <h2><%= s.getServiceName() %></h2>
+<div class="container mt-5" style="max-width: 900px;">
 
-    <img src="<%= request.getContextPath() + "/" + s.getImagePath() %>" width="250" alt="<%= s.getServiceName() %>"/>
+    <div class="row g-4">
 
-    <p class="mt-3"><%= s.getServiceDesc() %></p>
-    <p><strong>Price: </strong>$<%= s.getPrice() %></p>
+        <!-- Image -->
+        <div class="col-md-5">
+            <div class="client-card text-center">
 
-    <a href="<%= request.getContextPath() %>/CartController?action=add&serviceId=<%= s.getServiceId() %>" class="btn btn-primary">Add to Cart</a>
+                <img src="<%= request.getContextPath() + "/" + s.getImagePath() %>"
+                     alt="<%= s.getServiceName() %>"
+                     class="img-fluid rounded"
+                     style="border-radius: 12px; max-height: 280px; object-fit: cover;">
+            </div>
+        </div>
 
+        <!-- Details -->
+        <div class="col-md-7">
 
+            <div class="client-card h-100">
+
+                <h2 class="client-page-title"><%= s.getServiceName() %></h2>
+
+                <p class="text-muted">
+                    <%= s.getServiceDesc() %>
+                </p>
+
+                <h4 class="fw-bold mt-3 text-purple">
+                    Price: $<%= s.getPrice() %>
+                </h4>
+
+                <a href="<%= request.getContextPath() %>/CartController?action=add&serviceId=<%= s.getServiceId() %>"
+                   class="btn btn-client-primary w-100 mt-4">
+                    Add to Cart
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 </div>
 

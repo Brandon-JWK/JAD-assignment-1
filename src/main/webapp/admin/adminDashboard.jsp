@@ -18,7 +18,38 @@
     int totalCategories = categoryDao.getAllCategories().size();
     int totalClients = clientDao.getAllClients().size();
 
-    List<Service> serviceList = serviceDao.getAllServices();
+ 	// PAGINATION SETUP
+    int currentpage = 1;
+    int limit = 5; // services per page
+
+    if (request.getParameter("page") != null) {
+        currentpage = Integer.parseInt(request.getParameter("page"));
+    }
+
+    int offset = (currentpage - 1) * limit;
+
+    // FILTER VARIABLES
+    String keyword = request.getParameter("keyword");
+	String categoryStr = request.getParameter("categoryId");
+	
+	// Fix pagination issue: some URLs send "null" as string
+	if (keyword == null || keyword.equals("null") || keyword.trim().isEmpty()) {
+	    keyword = null;
+	}
+	
+	if (categoryStr == null || categoryStr.equals("null") || categoryStr.trim().isEmpty()) {
+	    categoryStr = null;
+	}
+	
+	Integer categoryId = (categoryStr != null) ? Integer.parseInt(categoryStr) : null;
+
+
+    // TOTAL COUNT
+    int totalServicesFiltered = serviceDao.countServices(keyword, categoryId);
+    int totalPages = (int) Math.ceil((double) totalServicesFiltered / limit);
+
+    // LOAD RESULTS
+    List<Service> serviceList = serviceDao.searchFilterPaginate(keyword, categoryId, offset, limit);
 %>
 
 <div class="page-wrapper d-flex flex-column">
@@ -61,32 +92,125 @@
                                 <h2 class="dashboard-value text-danger"><%= totalClients %></h2>
                             </div>
                         </div>
-
-                    </div>
-
-                    <!-- TABLE SECTION -->
-                    <div class="table-responsive card shadow-sm p-3">
-                        <h4 class="mb-3">Recent Services</h4>
-                        <table class="table table-striped table-bordered align-middle">
-                            <thead>
-                                <tr>
-                                    <th>Service Name</th>
-                                    <th>Category</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% for (Service s : serviceList) { 
-                                    Category cat = categoryDao.getCategoryById(s.getCategoryId());
-                                %>
-                                    <tr>
-                                        <td><%= s.getServiceName() %></td>
-                                        <td><%= cat != null ? cat.getCategoryName() : "N/A" %></td>
-                                    </tr>
-                                <% } %>
-                            </tbody>
-                        </table>
-                    </div>
-
+                        
+                        <!-- TABLE SECTION -->
+	                    <div class="table-responsive card shadow-sm p-3">
+	                        <h4 class="mb-3">Recent Services</h4>
+	                        <!-- FILTER FORM -->
+							<form method="get" action="adminDashboard.jsp" class="d-flex gap-3 mb-3">
+							
+							    <!-- SEARCH BAR -->
+							    <input type="text" 
+							           name="keyword" 
+							           class="form-control" 
+							           placeholder="Search services..." 
+							           style="max-width: 250px"
+							           value="<%= request.getParameter("keyword") != null ? request.getParameter("keyword") : "" %>">
+							
+							    <!-- CATEGORY FILTER (existing) -->
+							    <select name="categoryId" class="form-select" style="max-width: 250px;">
+							        <option value="">All Categories</option>
+							        <% 
+							            List<Category> categories = categoryDao.getAllCategories();
+							            String selectedCat = request.getParameter("categoryId");
+							            for (Category c : categories) { 
+							        %>
+							            <option value="<%= c.getCategoryId() %>"
+							                <%= (selectedCat != null && selectedCat.equals(String.valueOf(c.getCategoryId()))) ? "selected" : "" %>>
+							                <%= c.getCategoryName() %>
+							            </option>
+							        <% } %>
+							    </select>
+							
+							    <button type="submit" class="btn btn-primary">Filter</button>
+							</form>
+	
+	                        
+	                        <table class="table table-striped table-bordered align-middle">
+	                            <thead>
+	                                <tr>
+	                                    <th>Service Name</th>
+	                                    <th>Category</th>
+	                                </tr>
+	                            </thead>
+	                            <tbody>
+	                                <% for (Service s : serviceList) { 
+	                                    Category cat = categoryDao.getCategoryById(s.getCategoryId());
+	                                %>
+	                                    <tr>
+	                                        <td><%= s.getServiceName() %></td>
+	                                        <td><%= cat != null ? cat.getCategoryName() : "N/A" %></td>
+	                                    </tr>
+	                                <% } %>
+	                            </tbody>
+	                        </table>
+	                        <nav aria-label="Page navigation">
+							    <ul class="pagination">
+							        <% if (currentpage > 1) { %>
+							            <li class="page-item">
+							                <a class="page-link"
+							                   href="adminDashboard.jsp?page=<%= currentpage - 1 %>&keyword=<%= keyword %>&categoryId=<%= categoryStr %>">
+							                   Previous
+							                </a>
+							            </li>
+							        <% } %>
+							
+							        <% for (int i = 1; i <= totalPages; i++) { %>
+							            <li class="page-item <%= (i == currentpage ? "active" : "") %>">
+							                <a class="page-link"
+							                   href="adminDashboard.jsp?page=<%= i %>&keyword=<%= keyword %>&categoryId=<%= categoryStr %>">
+							                   <%= i %>
+							                </a>
+							            </li>
+							        <% } %>
+							
+							        <% if (currentpage < totalPages) { %>
+							            <li class="page-item">
+							                <a class="page-link"
+							                   href="adminDashboard.jsp?page=<%= currentpage + 1 %>&keyword=<%= keyword %>&categoryId=<%= categoryStr %>">
+							                   Next
+							                </a>
+							            </li>
+							        <% } %>
+							    </ul>
+							</nav>
+	                    </div>
+                        
+                        <div class="card p-4 shadow-sm mb-4">
+						    <h4 class="mb-4">Service Analytics</h4>
+						    <canvas id="serviceChart"></canvas>
+						</div>
+						
+						<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+						
+						<script>
+						    const ctx = document.getElementById('serviceChart').getContext('2d');
+						
+						    const chart = new Chart(ctx, {
+						        type: 'bar',
+						        data: {
+						            labels: [
+						                <% for (Category c : categoryDao.getAllCategories()) { %>
+						                    "<%= c.getCategoryName() %>",
+						                <% } %>
+						            ],
+						            datasets: [{
+						                label: "Number of Services",
+						                data: [
+						                    <% for (Category c : categoryDao.getAllCategories()) { %>
+						                        <%= serviceDao.getServicesByCategory(c.getCategoryId()).size() %>,
+						                    <% } %>
+						                ],
+						                backgroundColor: "#4e73df"
+						            }]
+						        },
+						        options: {
+						            responsive: true,
+						            plugins: { legend: { display: true } }
+						        }
+						    });
+						</script>   
+                    </div>		
                 </main>
             </div>
 

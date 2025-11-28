@@ -8,13 +8,13 @@ public class DB {
 	public static Connection getConnection() throws SQLException {
 		String url = System.getenv("DB_URL");
 		String user = System.getenv("DB_USER");
-		String db = System.getenv("DB_PASSWORD");
+		String password = System.getenv("DB_PASSWORD");
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		return DriverManager.getConnection(url, user, db);
+		return DriverManager.getConnection(url, user, password);
 	}
 }
 
