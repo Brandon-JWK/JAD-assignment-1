@@ -7,6 +7,8 @@ public class Service {
     private double price;
     private int categoryId;
     private String imagePath;
+    private int bookingId;
+    private int detailId;
 
     public Service() {}
 
@@ -66,4 +68,20 @@ public class Service {
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
     }
+    
+    public int getBookingId() { 
+    	return bookingId; 
+    }
+    
+    public void setBookingId(int bookingId) { 
+    	this.bookingId = bookingId; 
+    }
+    
+    public int getDetailId() {
+    	return detailId;
+    }
+
+	public void setDetailId(int detailId) {
+		this.detailId = detailId;
+	}
 }

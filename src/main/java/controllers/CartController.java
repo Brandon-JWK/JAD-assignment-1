@@ -10,44 +10,56 @@ import models.Client;
 @WebServlet("/CartController")
 public class CartController extends HttpServlet {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
-
-        // Get logged-in client
         Client client = (session != null) ? (Client) session.getAttribute("client") : null;
 
         if (client == null) {
-            // Not logged in → redirect
             response.sendRedirect(request.getContextPath() + "/client/clientLogin.jsp");
             return;
         }
 
         int clientId = client.getClientId();
         String action = request.getParameter("action");
-        int serviceId = request.getParameter("serviceId") != null ? Integer.parseInt(request.getParameter("serviceId")) : 0;
+        String serviceIdParam = request.getParameter("serviceId");
+        String detailIdParam = request.getParameter("detailId"); // FIXED
 
         CartDao dao = new CartDao();
 
+        if (action == null) {
+            response.sendRedirect(request.getContextPath() + "/booking/viewCart.jsp");
+            return;
+        }
+
         switch (action) {
+
             case "add":
-                dao.addToCart(clientId, serviceId);
-                response.sendRedirect(request.getContextPath() + "/booking/viewCart.jsp");
+                if (serviceIdParam != null) {
+                    int serviceId = Integer.parseInt(serviceIdParam);
+                    dao.addToCart(clientId, serviceId);
+                }
                 break;
+
             case "remove":
-                dao.removeFromCart(clientId, serviceId);
-                response.sendRedirect(request.getContextPath() + "/booking/viewCart.jsp");
+                if (detailIdParam != null) {        // FIXED
+                    int detailId = Integer.parseInt(detailIdParam);
+                    dao.removeFromCart(detailId);   // FIXED
+                }
                 break;
+
             case "clear":
                 dao.clearCart(clientId);
-                response.sendRedirect(request.getContextPath() + "/booking/viewCart.jsp");
                 break;
+
             default:
-                response.sendRedirect(request.getContextPath() + "/booking/viewCart.jsp");
+                break;
         }
+
+        response.sendRedirect(request.getContextPath() + "/booking/viewCart.jsp");
     }
 }

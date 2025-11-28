@@ -61,7 +61,7 @@
 	                        <td style="max-width: 300px;"><%= s.getServiceDesc() %></td>
 	                        <td>$<%= s.getPrice() %></td>
 	                        <td>
-	                            <a href="<%= request.getContextPath() %>/CartController?action=remove&serviceId=<%= s.getServiceId() %>"
+	                            <a href="<%= request.getContextPath() %>/CartController?action=remove&detailId=<%= s.getDetailId() %>"
 	                               class="btn btn-client-danger btn-sm w-100">
 	                                Remove
 	                            </a>
