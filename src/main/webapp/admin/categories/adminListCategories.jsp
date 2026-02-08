@@ -24,7 +24,7 @@
                                 flex-wrap flex-md-nowrap align-items-center 
                                 pt-3 pb-2 mb-3 border-bottom">
 
-                        <h1 class="h2">Service Categories</h1>
+                        <h1 class="h2">Categories</h1>
 
                         <a href="<%=request.getContextPath() %>/admin/categories/adminAddCategory.jsp" 
                            class="btn btn-success btn-lg">
@@ -49,7 +49,7 @@
                                 <tr>
                                     <td><%= c.getCategoryId() %></td>
 
-                                    <td><%= c.getCategoryName() %></td>
+                                    <td><span class="category-name"><%= c.getCategoryName() %></span></td>
 
                                     <td><%= c.getCategoryDesc() %></td>
 

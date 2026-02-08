@@ -186,7 +186,7 @@
 							const ctx = document.getElementById('serviceChart').getContext('2d');
 							
 							const dataSets = [
-							    <% 
+							    <%
 							    for (Category c : categoryDao.getAllCategories()) { 
 							        int count = serviceDao.getServicesByCategory(c.getCategoryId()).size();
 							    %>
