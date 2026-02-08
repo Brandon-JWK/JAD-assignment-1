@@ -1,6 +1,6 @@
 package dao;
 
-import util.SQLDB;
+import util.DB;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class CartDao {
     public void addToCart(int clientId, int serviceId) {
         String sql = "INSERT INTO booking_details (booking_id, service_id) VALUES (?, ?)";
 
-        try (Connection conn = SQLDB.getConnection()) {
+        try (Connection conn = DB.getConnection()) {
             int bookingId = getOrCreatePendingBooking(conn, clientId);
 
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -74,7 +74,7 @@ public class CartDao {
             "JOIN service s ON bd.service_id = s.service_id " +
             "WHERE b.client_id = ? AND b.status = 'Pending'";
 
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, clientId);
@@ -106,7 +106,7 @@ public class CartDao {
     public void removeFromCart(int detailId) {
         String sql = "DELETE FROM booking_details WHERE detail_id = ?";
 
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, detailId);
@@ -121,7 +121,7 @@ public class CartDao {
     public void clearCart(int clientId) {
         String sql = "DELETE FROM booking WHERE client_id = ? AND status = 'Pending'";
 
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, clientId);
@@ -133,7 +133,7 @@ public class CartDao {
     }
 
     public Integer getPendingBookingId(int clientId) {
-        try (Connection conn = SQLDB.getConnection()) {
+        try (Connection conn = DB.getConnection()) {
             return findPendingBookingId(conn, clientId);
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,7 +145,7 @@ public class CartDao {
     public void confirmBooking(int bookingId) {
         String sql = "UPDATE booking SET status = 'Confirmed' WHERE booking_id = ?";
 
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, bookingId);

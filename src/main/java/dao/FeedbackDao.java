@@ -1,6 +1,6 @@
 package dao;
 
-import util.SQLDB;
+import util.DB;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ public class FeedbackDao {
     public void addFeedback(Feedback fb) {
         String sql = "INSERT INTO feedback (client_id, service_id, rating, comments) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, fb.getClientId());
@@ -32,7 +32,7 @@ public class FeedbackDao {
 
         String sql = "SELECT * FROM feedback WHERE service_id = ? ORDER BY created_at DESC";
 
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, serviceId);
@@ -62,7 +62,7 @@ public class FeedbackDao {
 
         String sql = "SELECT * FROM feedback WHERE client_id = ? ORDER BY created_at DESC";
 
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, clientId);

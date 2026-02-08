@@ -3,7 +3,7 @@ package dao;
 import java.sql.*;
 import java.util.*;
 
-import util.SQLDB;
+import util.DB;
 import models.Client;
 
 public class ClientDao {
@@ -11,7 +11,7 @@ public class ClientDao {
     // Register new client
     public boolean register(Client c) {
         String sql = "INSERT INTO client(full_name, email, password, phone, address) VALUES (?, ?, ?, ?, ?)";
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, c.getFullName());
@@ -30,7 +30,7 @@ public class ClientDao {
     // Login validation
     public Client login(String email, String password) {
         String sql = "SELECT * FROM client WHERE email = ? AND password = ?";
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             System.out.println("DB Connection: " + conn);
@@ -63,7 +63,7 @@ public class ClientDao {
     // Retrieve client info
     public Client getClientById(int clientId) {
         String sql = "SELECT * FROM client WHERE client_id = ?";
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             System.out.println("Fetching client with ID: " + clientId);
@@ -90,7 +90,7 @@ public class ClientDao {
     // Update
     public boolean update(Client c) {
         String sql = "UPDATE client SET full_name = ?, email = ?, phone = ?, address = ? WHERE client_id = ?";
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, c.getFullName());
@@ -109,7 +109,7 @@ public class ClientDao {
     // Delete
     public boolean delete(int clientId) {
         String sql = "DELETE FROM client WHERE client_id = ?";
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, clientId);
@@ -125,7 +125,7 @@ public class ClientDao {
         List<Client> list = new ArrayList<>();
         String sql = "SELECT * FROM client ORDER BY client_id ASC";
 
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ResultSet rs = ps.executeQuery();

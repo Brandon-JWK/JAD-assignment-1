@@ -1,14 +1,14 @@
 package dao;
 
 import java.sql.*;
-import util.SQLDB;
+import util.DB;
 
 public class AdminDao {
 
     // Admin login validation
     public boolean validateLogin(String username, String password) {
         String sql = "SELECT * FROM admin WHERE username = ? AND password = ?";
-        try (Connection conn = SQLDB.getConnection();
+        try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, username);
@@ -28,7 +28,7 @@ public class AdminDao {
         String deleteFeedbackSql = "DELETE FROM feedback WHERE client_id = ?";
         String deleteClientSql = "DELETE FROM client WHERE client_id = ?";
 
-        try (Connection conn = SQLDB.getConnection()) {
+        try (Connection conn = DB.getConnection()) {
             conn.setAutoCommit(false);
 
             try (PreparedStatement ps1 = conn.prepareStatement(deleteFeedbackSql)) {
