@@ -269,34 +269,10 @@ html, body, button, a, .nav-link {
         transform: translateX(0);
     }
 
-	.page-wrapper {
-	    min-height: 100vh;
-	    display: flex;
-	    flex-direction: column;
-	}
-	
-	/* Push content, so footer stays at bottom */
-	.admin-layout {
-	    flex: 1;
-	    display: flex;
-	    flex-direction: column;
-	}
+    .admin-layout {
+        margin-left: 0 !important;
+    }
 }
-
-/* Make full-page layout stretch and footer stick to bottom */
-.page-wrapper {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Content grows so footer sits at the bottom only when needed */
-.admin-layout {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
 
 /* ======================================================
    CONTENT WRAPPER

@@ -1,74 +1,55 @@
-<%@ page import="dao.CartDao, models.Client, models.Service, java.util.*" %>
-
-<%
-    Client c = (Client) session.getAttribute("client");
-
-    if (c == null) {
-        response.sendRedirect(request.getContextPath() + "/client/clientLogin.jsp");
-        return;
-    }
-
-    CartDao cartDao = new CartDao();
-    List<Service> items = cartDao.getCartItems(c.getClientId());
-%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 
 <%@ include file="../includes/header.jsp" %>
 <%@ include file="../includes/navbar.jsp" %>
 
 <div class="client-page">
-<div class="container mt-5" style="max-width: 800px;">
+  <div class="container mt-5" style="max-width: 900px;">
 
-    <h2 class="client-page-title">Confirm Your Booking</h2>
+    <h2 class="client-page-title">Checkout Summary</h2>
+
+    <div class="client-card mb-3">
+      <p>Subtotal (No GST): <b>$${subtotal}</b></p>
+      <p>GST (9%): <b>$${gst}</b></p>
+      <p class="mb-0">Total (With GST): <b>$${total}</b></p>
+    </div>
 
     <div class="client-card">
+      <form method="post" action="<c:url value='/booking/checkout'/>">
 
-        <% if (items.isEmpty()) { %>
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Scheduled Date</label>
+            <input type="date" name="scheduledDate" class="form-control"/>
+          </div>
 
-            <p class="text-muted">Your cart is empty.</p>
+          <div class="col-md-6">
+            <label class="form-label">Scheduled Time</label>
+            <input type="time" name="scheduledTime" class="form-control"/>
+          </div>
 
-        <% } else { %>
+          <div class="col-12">
+            <label class="form-label">Remarks</label>
+            <input type="text" name="remarks" maxlength="255" class="form-control"/>
+          </div>
 
-            <table class="table client-table mb-4">
-                <thead>
-                    <tr>
-                        <th>Service</th>
-                        <th>Description</th>
-                        <th>Price</th>
-                    </tr>
-                </thead>
+          <div class="col-12">
+            <button type="submit" class="btn btn-client-primary w-100">
+              Confirm Booking
+            </button>
+          </div>
+        </div>
 
-                <tbody>
-                <% 
-                    double total = 0;
-                    for (Service s : items) {
-                        total += s.getPrice();
-                %>
-                    <tr>
-                        <td><%= s.getServiceName() %></td>
-                        <td><%= s.getServiceDesc() %></td>
-                        <td>$<%= s.getPrice() %></td>
-                    </tr>
-                <% } %>
-                </tbody>
+      </form>
 
-                <tfoot>
-                    <tr>
-                        <th colspan="2" class="text-end">Total:</th>
-                        <th>$<%= total %></th>
-                    </tr>
-                </tfoot>
-            </table>
-
-            <form action="<%= request.getContextPath() %>/CheckoutController" method="post">
-                <button class="btn btn-client-primary w-100">
-                    Confirm Booking
-                </button>
-            </form>
-
-        <% } %>
-
+      <div class="mt-3">
+        <a href="<c:url value='/booking/viewCart.jsp'/>" class="btn btn-client-secondary w-100">
+          Back to Cart
+        </a>
+      </div>
     </div>
-</div>
+
+  </div>
 </div>
 
 <%@ include file="../includes/footer.jsp" %>

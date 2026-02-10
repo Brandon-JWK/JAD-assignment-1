@@ -1,32 +1,37 @@
 /* --------------------------------------
    HEADINGS
 ----------------------------------------- */
+/* ======================================================
+   ADMIN TYPOGRAPHY (Same as client)
+====================================================== */
+
 .admin-content h1,
 .admin-content h2,
+.admin-content h3,
 .admin-content h4,
 .admin-form-card h2 {
-    font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    letter-spacing: -0.3px;
+  font-family: "Inter","Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+  letter-spacing: -0.3px;
 }
 
 .admin-content h1 {
-    font-size: 30px;
-    font-weight: 800;
-    color: #4f3cd1;
+  font-size: 30px;
+  font-weight: 800;
+  color: #4F3CD1;
 }
 
 .admin-content h2,
 .admin-form-card h2 {
-    font-size: 26px;
-    font-weight: 700;
-    color: #4f3cd1;
-    margin-bottom: 18px;
+  font-size: 26px;
+  font-weight: 700;
+  color: #4F3CD1;
+  margin-bottom: 18px;
 }
 
 .admin-content h4 {
-    font-size: 20px;
-    font-weight: 600;
-    color: #333;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
 }
 
 /* --------------------------------------
@@ -290,6 +295,77 @@
 
 .admin-form-card select:hover {
     background: #f5f5ff;
+}
+
+/* ======================================================
+   MOBILE SIDEBAR TOGGLE
+====================================================== */
+
+.admin-sidebar-toggle {
+  position: fixed;
+  top: 14px;
+  left: 14px;
+  z-index: 1101;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 10px;
+  background: #6c5ce7;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(108,92,231,0.28);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.admin-sidebar-toggle:hover {
+  background: #4f3cd1;
+}
+
+.hamburger-icon {
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* Overlay */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  z-index: 1100;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+/* Sidebar default */
+#adminSidebar {
+  background: #ffffff; /* keep your existing sidebar theme if different */
+}
+
+/* Mobile behavior: slide off-canvas */
+@media (max-width: 767.98px) {
+  #adminSidebar.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    max-width: 85vw;
+    height: 100vh;
+    transform: translateX(-105%);
+    transition: transform 0.25s ease;
+    z-index: 1102;
+    box-shadow: 10px 0 30px rgba(0,0,0,0.12);
+  }
+
+  body.sidebar-open #adminSidebar.sidebar {
+    transform: translateX(0);
+  }
+
+  body.sidebar-open #sidebarOverlay {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }
 
 /* --------------------------------------

@@ -4,7 +4,6 @@
 
 <%@ include file="../includes/header.jsp" %>
 <%@ include file="../includes/navbar.jsp" %>
-<%@ include file="../includes/sidebar.jsp" %>
 
 <link rel="stylesheet" href="<%=request.getContextPath()%>/assets/css/admin.css?v=3">
 
@@ -56,14 +55,20 @@
 
         <!-- Main Content Area -->
         <main class="admin-content">
-
             <div class="row">
+                <%@ include file="../includes/sidebar.jsp" %>
                 <main class="col-md-10 ms-sm-auto px-4">
 
                     <!-- PAGE TITLE -->
-                    <div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
-                        <h1 class="h2">Dashboard Overview</h1>
-                    </div>
+					<div class="d-flex justify-content-between align-items-center pt-3 pb-2 mb-4 border-bottom">
+					    <h1 class="h2">Dashboard Overview</h1>
+					
+					    <a href="<%= request.getContextPath() %>/AdminController?action=reports"
+					       class="btn btn-primary">
+					        View Reports
+					    </a>
+					</div>
+
 
                     <!-- DASHBOARD METRICS -->
                     <div class="row g-3 mb-4">

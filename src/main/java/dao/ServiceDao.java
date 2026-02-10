@@ -61,32 +61,6 @@ public class ServiceDao {
         return list;
     }
 
-//    // Retrieve 1 service
-//    public Service getServiceById(int serviceId) {
-//        String sql = "SELECT * FROM service WHERE service_id = ?";
-//
-//        try (Connection conn = DB.getConnection();
-//             PreparedStatement ps = conn.prepareStatement(sql)) {
-//
-//            ps.setInt(1, serviceId);
-//            ResultSet rs = ps.executeQuery();
-//
-//            if (rs.next()) {
-//                return new Service(
-//                    rs.getInt("service_id"),
-//                    rs.getString("service_name"),
-//                    rs.getString("service_desc"),
-//                    rs.getDouble("price"),
-//                    rs.getInt("category_id"),
-//                    rs.getString("image_path")
-//                );
-//            }
-//
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
     public Service getServiceById(int serviceId) {
         String sql = "SELECT * FROM service WHERE service_id = ?";
 
@@ -260,5 +234,4 @@ public class ServiceDao {
 
         return count;
     }
-
 }

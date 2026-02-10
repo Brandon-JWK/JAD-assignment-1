@@ -46,10 +46,10 @@
 	
 	        </div>
 	
-	        <a href="<%= request.getContextPath() %>/booking/viewCart.jsp"
-	           class="btn btn-client-primary w-100 mt-4">
-	            View Bookings (<%= cartCount %>)
-	        </a>
+	        <a href="<%= request.getContextPath() %>/ClientController?action=viewBookings"
+			   class="btn btn-client-primary w-100">
+			   View My Bookings
+			</a>
 	    </div>
 	</div>
 </div>

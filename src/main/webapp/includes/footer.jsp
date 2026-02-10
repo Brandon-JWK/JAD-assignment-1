@@ -1,8 +1,11 @@
-<footer class="footer text-center py-3">
-    <p>© 2025 Silver Care. All Rights Reserved.</p>
-</footer>
+<div class="client-scope">
+	<footer class="footer text-center py-3">
+    	<p>© 2025 Silver Care. All Rights Reserved.</p>
+	</footer>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="<%=request.getContextPath()%>/assets/js/adminSidebar.js" defer></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {

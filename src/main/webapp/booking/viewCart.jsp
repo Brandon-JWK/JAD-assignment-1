@@ -78,10 +78,11 @@
 	                </tfoot>
 	            </table>
 	
-	            <a href="<%= request.getContextPath() %>/booking/checkout.jsp"
-	               class="btn btn-client-primary w-100">
-	                Confirm Booking
-	            </a>
+	            <a href="<%= request.getContextPath() %>/booking/checkout"
+				   class="btn btn-client-primary w-100">
+				    Confirm Booking
+				</a>
+
 	
 	        </div>
 	
