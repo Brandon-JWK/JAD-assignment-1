@@ -36,6 +36,19 @@
 	                <th>Address</th>
 	                <td><%= c.getAddress() %></td>
 	            </tr>
+	            <tr>
+    <th>Emergency Contact Name</th>
+    <td><%= c.getEmergencyContactName() != null ? c.getEmergencyContactName() : "-" %></td>
+</tr>
+<tr>
+    <th>Emergency Contact Phone</th>
+    <td><%= c.getEmergencyContactPhone() != null ? c.getEmergencyContactPhone() : "-" %></td>
+</tr>
+<tr>
+    <th>Medical Information</th>
+    <td><%= c.getMedicalInfo() != null ? c.getMedicalInfo() : "-" %></td>
+</tr>
+	            
 	        </table>
 	
 	        <a href="clientEditProfile.jsp" class="btn btn-client-primary w-100">

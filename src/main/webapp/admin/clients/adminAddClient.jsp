@@ -32,7 +32,7 @@
                         <!-- Full Name -->
                         <div class="form-group">
                         	<label>Full Name</label>
-                            <input type="text" name="full_name" class="form-control" required placeholder=" ">
+                            <input type="text" name="fullName" class="form-control" required placeholder=" ">
                         </div>
 
                         <!-- Email -->
@@ -51,6 +51,24 @@
                         <div class="form-group">
                          	<label>Address</label>
                             <input type="text" name="address" class="form-control" placeholder=" ">
+                        </div>
+
+                        <!-- Emergency Contact Name -->
+                        <div class="form-group">
+                         	<label>Emergency Contact Name</label>
+                            <input type="text" name="emergencyContactName" class="form-control" placeholder=" ">
+                        </div>
+
+                        <!-- Emergency Contact Phone -->
+                        <div class="form-group">
+                         	<label>Emergency Contact Phone</label>
+                            <input type="text" name="emergencyContactPhone" class="form-control" placeholder=" ">
+                        </div>
+
+                        <!-- Medical Information -->
+                        <div class="form-group">
+                         	<label>Medical Information</label>
+                            <textarea name="medicalInfo" class="form-control" rows="3" placeholder=" "></textarea>
                         </div>
 
                         <!-- Password -->
