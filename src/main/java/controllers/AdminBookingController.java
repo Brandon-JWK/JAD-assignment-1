@@ -11,7 +11,10 @@ public class AdminBookingController extends HttpServlet {
 
     private final AdminBookingDao dao = new AdminBookingDao();
 
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+
         String action = request.getParameter("action");
         int bookingId = Integer.parseInt(request.getParameter("bookingId"));
 

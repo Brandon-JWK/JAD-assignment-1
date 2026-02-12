@@ -56,8 +56,6 @@
                                             <form action="<%=request.getContextPath()%>/AdminBookingController" method="post" style="display:inline;">
                                                 <input type="hidden" name="bookingId" value="<%=b.getBookingId()%>"/>
                                                 <select name="status" class="form-select form-select-sm d-inline w-auto">
-                                                    <option value="Pending" <%= "Pending".equals(b.getStatus()) ? "selected" : "" %>>Pending</option>
-                                                    <option value="Confirmed" <%= "Confirmed".equals(b.getStatus()) ? "selected" : "" %>>Confirmed</option>
                                                     <option value="Completed" <%= "Completed".equals(b.getStatus()) ? "selected" : "" %>>Completed</option>
                                                     <option value="Cancelled" <%= "Cancelled".equals(b.getStatus()) ? "selected" : "" %>>Cancelled</option>
                                                 </select>

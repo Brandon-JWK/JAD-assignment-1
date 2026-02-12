@@ -25,7 +25,7 @@ public class AdminBookingDao {
                         rs.getTimestamp("created_at"),
                         rs.getString("status")
                     );
-                    b.setClientName(rs.getString("client_name")); // You may need to add this field in Booking.java
+                    b.setClientName(rs.getString("client_name"));
                     b.setScheduledDate(rs.getDate("scheduled_date"));
                     b.setScheduledTime(rs.getTime("scheduled_time"));
                     b.setGstRate(rs.getDouble("gst_rate"));
@@ -37,13 +37,46 @@ public class AdminBookingDao {
         return list;
     }
 
-    // Update booking status
+    /**
+     * Update booking status and sync with service_status table.
+     * Handles special cases for Cancelled / Completed.
+     */
     public void updateBookingStatus(int bookingId, String status) throws SQLException {
-        String sql = "UPDATE booking SET status=? WHERE booking_id=?";
-        try (Connection conn = DB.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, status);
-            ps.setInt(2, bookingId);
-            ps.executeUpdate();
+        String sqlBooking = "UPDATE booking SET status=? WHERE booking_id=?";
+        String sqlServiceStatus = "UPDATE service_status SET status=?";
+
+        // Special handling for Cancelled or Completed
+        if ("Cancelled".equalsIgnoreCase(status)) {
+            sqlServiceStatus += ", check_in_time=NULL, check_out_time=NULL ";
+        } else if ("Completed".equalsIgnoreCase(status)) {
+            sqlServiceStatus += ", check_out_time=COALESCE(check_out_time, NOW()) ";
+        }
+
+        sqlServiceStatus += "WHERE booking_id=?";
+
+        try (Connection conn = DB.getConnection()) {
+            conn.setAutoCommit(false); // Transaction start
+
+            try (PreparedStatement psBooking = conn.prepareStatement(sqlBooking);
+                 PreparedStatement psStatus = conn.prepareStatement(sqlServiceStatus)) {
+
+                // Update booking table
+                psBooking.setString(1, status);
+                psBooking.setInt(2, bookingId);
+                psBooking.executeUpdate();
+
+                // Update service_status table
+                psStatus.setString(1, status);
+                psStatus.setInt(2, bookingId);
+                psStatus.executeUpdate();
+
+                conn.commit();
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(true);
+            }
         }
     }
 
@@ -55,6 +88,4 @@ public class AdminBookingDao {
             ps.executeUpdate();
         }
     }
-
-
 }

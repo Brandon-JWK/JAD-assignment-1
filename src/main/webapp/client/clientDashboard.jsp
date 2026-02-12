@@ -43,6 +43,12 @@
 	               class="list-group-item list-group-item-action py-3 text-danger fw-bold">
 	                Delete Account
 	            </a>
+	            
+	            <!-- New Link for Real-time Service Status -->
+    <a href="clientServiceStatus.jsp"
+       class="list-group-item list-group-item-action py-3 text-info fw-bold">
+        View Real-time Service Status
+    </a>
 	
 	        </div>
 	
