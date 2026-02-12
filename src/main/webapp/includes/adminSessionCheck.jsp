@@ -1,6 +1,6 @@
 <%
     if (session.getAttribute("admin") == null) {
-        response.sendRedirect("../adminLogin.jsp"); // redirect to login if not logged in
+        response.sendRedirect(request.getContextPath() + "/admin/adminLogin.jsp"); // redirect to login if not logged in
         return;
     }
 %>

@@ -136,9 +136,12 @@ public class ClientController extends HttpServlet {
                 id,
                 request.getParameter("fullName"),
                 request.getParameter("email"),
-                "",
+                "", // password unchanged
                 request.getParameter("phone"),
-                request.getParameter("address")
+                request.getParameter("address"),
+                request.getParameter("emergencyContactName"),
+                request.getParameter("emergencyContactPhone"),
+                request.getParameter("medicalInfo")
             );
 
             if (dao.update(c)) {
@@ -147,9 +150,10 @@ public class ClientController extends HttpServlet {
                 response.sendRedirect("client/clientProfile.jsp?success=1");
             } else {
                 request.setAttribute("error", "Update failed");
-                request.getRequestDispatcher("client/editClientProfile.jsp").forward(request, response);
+                request.getRequestDispatcher("client/clientEditProfile.jsp").forward(request, response);
             }
         }
+
 
         // DELETE CLIENT ACCOUNT
         if ("deleteClient".equals(action)) {

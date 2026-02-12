@@ -43,13 +43,16 @@ public class ClientDao {
             if (rs.next()) {
                 System.out.println("Login successful for: " + email);
                 return new Client(
-                    rs.getInt("client_id"),
-                    rs.getString("full_name"),
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getString("phone"),
-                    rs.getString("address")
-                );
+                	    rs.getInt("client_id"),
+                	    rs.getString("full_name"),
+                	    rs.getString("email"),
+                	    rs.getString("password"),
+                	    rs.getString("phone"),
+                	    rs.getString("address"),
+                	    rs.getString("emergency_contact_name"),
+                	    rs.getString("emergency_contact_phone"),
+                	    rs.getString("medical_info")
+                	);
             } else {
                 System.out.println("No match found for: " + email + " / " + password);
             }
@@ -71,14 +74,17 @@ public class ClientDao {
             ResultSet rs = ps.executeQuery();
 
             if (rs.next()) {
-                return new Client(
-                    rs.getInt("client_id"),
-                    rs.getString("full_name"),
-                    rs.getString("email"),
-                    rs.getString("password"),
-                    rs.getString("phone"),
-                    rs.getString("address")
-                );
+            	return new Client(
+            		    rs.getInt("client_id"),
+            		    rs.getString("full_name"),
+            		    rs.getString("email"),
+            		    rs.getString("password"),
+            		    rs.getString("phone"),
+            		    rs.getString("address"),
+            		    rs.getString("emergency_contact_name"),
+            		    rs.getString("emergency_contact_phone"),
+            		    rs.getString("medical_info")
+            		);
             }
 
         } catch (Exception e) {
@@ -88,8 +94,11 @@ public class ClientDao {
     }
 
     // Update
+ // Update
     public boolean update(Client c) {
-        String sql = "UPDATE client SET full_name = ?, email = ?, phone = ?, address = ? WHERE client_id = ?";
+        String sql = "UPDATE client SET full_name = ?, email = ?, phone = ?, address = ?, " +
+                     "emergency_contact_name = ?, emergency_contact_phone = ?, medical_info = ? " +
+                     "WHERE client_id = ?";
         try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -97,7 +106,11 @@ public class ClientDao {
             ps.setString(2, c.getEmail());
             ps.setString(3, c.getPhone());
             ps.setString(4, c.getAddress());
-            ps.setInt(5, c.getClientId());
+            ps.setString(5, c.getEmergencyContactName());
+            ps.setString(6, c.getEmergencyContactPhone());
+            ps.setString(7, c.getMedicalInfo());
+            ps.setInt(8, c.getClientId());
+
             return ps.executeUpdate() > 0;
 
         } catch (Exception e) {
@@ -105,6 +118,7 @@ public class ClientDao {
             return false;
         }
     }
+
 
     // Delete
     public boolean delete(int clientId) {
@@ -120,7 +134,7 @@ public class ClientDao {
             return false;
         }
     }
-    // Get all clients
+ // Get all clients (for admin)
     public List<Client> getAllClients() {
         List<Client> list = new ArrayList<>();
         String sql = "SELECT * FROM client ORDER BY client_id ASC";
@@ -136,7 +150,10 @@ public class ClientDao {
                     rs.getString("email"),
                     rs.getString("password"),
                     rs.getString("phone"),
-                    rs.getString("address")
+                    rs.getString("address"),
+                    rs.getString("emergency_contact_name"),
+                    rs.getString("emergency_contact_phone"),
+                    rs.getString("medical_info")
                 ));
             }
         } catch (Exception e) {
@@ -144,5 +161,6 @@ public class ClientDao {
         }
         return list;
     }
+    
 
 }

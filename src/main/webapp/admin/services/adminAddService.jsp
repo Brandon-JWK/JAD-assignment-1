@@ -20,7 +20,10 @@
                 <h1 class="h2 pt-3 pb-2 mb-3 border-bottom">Add New Service</h1>
 
                 <div class="admin-form-card">
-                    <form action="<%=request.getContextPath()%>/ServiceController" method="post">
+                    <form action="<%=request.getContextPath()%>/ServiceController"
+      method="post"
+      enctype="multipart/form-data">
+
                         <input type="hidden" name="action" value="addService"/>
 
                         <!-- Service Name -->
@@ -54,9 +57,9 @@
 
                         <!-- Image Path -->
                         <div class="form-group">
-                            <label>Image Path</label>
-                            <input type="text" name="imagePath" class="form-control" required placeholder=" ">
-                        </div>
+    <label>Service Image</label>
+    <input type="file" name="imageFile" class="form-control" accept="image/*" required>
+</div>
 
                         <!-- Buttons -->
                         <div class="mt-4">

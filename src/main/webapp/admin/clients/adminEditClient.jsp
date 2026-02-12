@@ -19,7 +19,6 @@
 <div class="page-wrapper d-flex flex-column">
     <div class="admin-layout d-flex flex-column flex-grow-1">
         <div class="row">
-
             <!-- Main -->
             <main class="col-md-10 ms-sm-auto px-4 admin-content">
 
@@ -31,26 +30,55 @@
 
                         <input type="hidden" name="id" value="<%= c.getClientId() %>">
 
+                        <!-- Full Name -->
                         <div class="form-group">
                         	<label>Full Name</label>
-                            <input type="text" name="full_name" class="form-control" value="<%= c.getFullName() %>" required placeholder=" ">
+                            <input type="text" name="fullName" class="form-control" 
+                                   value="<%= c.getFullName() %>" required>
                         </div>
 
+                        <!-- Email -->
                         <div class="form-group">
-                        	<label>Email</label>
-                            <input type="email" name="email" class="form-control" value="<%= c.getEmail() %>" required placeholder=" ">
+                            <label>Email</label>
+                            <input type="email" name="email" class="form-control" 
+                                   value="<%= c.getEmail() %>" required>
                         </div>
 
+                        <!-- Phone -->
                         <div class="form-group">
                         	<label>Phone</label>
-                            <input type="text" name="phone" class="form-control" value="<%= c.getPhone() %>" placeholder=" ">
+                            <input type="text" name="phone" class="form-control" 
+                                   value="<%= c.getPhone() != null ? c.getPhone() : "" %>">
                         </div>
 
+                        <!-- Address -->
                         <div class="form-group">
                             <label>Address</label>
-                            <input type="text" name="address" class="form-control" value="<%= c.getAddress() %>" placeholder=" ">
+                            <input type="text" name="address" class="form-control" 
+                                   value="<%= c.getAddress() != null ? c.getAddress() : "" %>">
                         </div>
 
+                        <!-- Emergency Contact Name -->
+                        <div class="form-group">
+                            <label>Emergency Contact Name</label>
+                            <input type="text" name="emergencyContactName" class="form-control" 
+                                   value="<%= c.getEmergencyContactName() != null ? c.getEmergencyContactName() : "" %>">
+                        </div>
+
+                        <!-- Emergency Contact Phone -->
+                        <div class="form-group">
+                            <label>Emergency Contact Phone</label>
+                            <input type="text" name="emergencyContactPhone" class="form-control" 
+                                   value="<%= c.getEmergencyContactPhone() != null ? c.getEmergencyContactPhone() : "" %>">
+                        </div>
+
+                        <!-- Medical Info -->
+                        <div class="form-group">
+                            <label>Medical Information</label>
+                            <textarea name="medicalInfo" class="form-control" rows="3"><%= c.getMedicalInfo() != null ? c.getMedicalInfo() : "" %></textarea>
+                        </div>
+
+                        <!-- Buttons -->
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary">Update Client</button>
                             <a href="adminListClients.jsp" class="btn btn-secondary ms-2">Cancel</a>

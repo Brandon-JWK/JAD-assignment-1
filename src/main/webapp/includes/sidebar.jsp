@@ -23,6 +23,12 @@
             <li class="nav-item">
                 <a class="nav-link" href="<%=request.getContextPath()%>/admin/clients/adminListClients.jsp">Manage Clients</a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<%=request.getContextPath()%>/admin/bookings/adminListBookings.jsp">Manage Bookings</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="<%=request.getContextPath()%>/admin/feedback/adminListFeedback.jsp">Manage Feedback</a>
+            </li>
         </ul>
     </div>
 </nav>
