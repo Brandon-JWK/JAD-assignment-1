@@ -28,6 +28,7 @@
 		    <%
 		        Object client = session.getAttribute("client");
 		        Object admin  = session.getAttribute("admin");
+		        Object caregiver = session.getAttribute("caregiver"); 
 		    %>
 		
 		    <!-- CLIENT: login or dashboard -->
@@ -55,6 +56,21 @@
 		        </a>
 		      <% } %>
 		    </li>
+		    
+		    <!-- Caregiver: login or dashboard -->
+<li class="nav-item">
+  <% 
+      if (caregiver != null) { 
+  %>
+    <a class="nav-link" href="<%=request.getContextPath() %>/caregiver/caregiverDashboard.jsp">
+      Caregiver Dashboard
+    </a>
+  <% } else { %>
+    <a class="nav-link" href="<%=request.getContextPath() %>/caregiver/caregiverLogin.jsp">
+      Caregiver Login
+    </a>
+  <% } %>
+</li>
 		    
 			<li class="nav-item">
 			    <form action="<%=request.getContextPath() %>/AuthController" method="post">

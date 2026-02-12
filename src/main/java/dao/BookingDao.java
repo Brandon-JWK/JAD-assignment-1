@@ -221,24 +221,42 @@ public class BookingDao {
         }
     }
     
-    public void confirmBooking(int bookingId, Date scheduledDate, Time scheduledTime, double gstRate, String remarks)
-            throws SQLException {
+    public void confirmBooking(int bookingId, Date scheduledDate, Time scheduledTime, double gstRate, String remarks) throws SQLException {
+        try (Connection conn = DB.getConnection()) {
 
-        String sql =
-            "UPDATE booking " +
-            "SET status='Confirmed', scheduled_date=?, scheduled_time=?, gst_rate=?, remarks=? " +
-            "WHERE booking_id=?";
+            // ===== 1. Choose a caregiver (simplest: first available) =====
+            int caregiverId = 0;
+            String caregiverSql = "SELECT caregiver_id FROM caregiver ORDER BY caregiver_id LIMIT 1";
+            try (PreparedStatement psCare = conn.prepareStatement(caregiverSql);
+                 ResultSet rs = psCare.executeQuery()) {
+                if (rs.next()) {
+                    caregiverId = rs.getInt("caregiver_id");
+                } else {
+                    throw new SQLException("No caregiver available to assign.");
+                }
+            }
 
-        try (Connection conn = DB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+            // ===== 2. Update booking with status, schedule, gst, remarks, caregiver =====
+            String sql = "UPDATE booking SET status = 'Confirmed', scheduled_date = ?, scheduled_time = ?, gst_rate = ?, remarks = ?, caregiver_id = ? WHERE booking_id = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                ps.setDate(1, scheduledDate);
+                ps.setTime(2, scheduledTime);
+                ps.setDouble(3, gstRate);
+                ps.setString(4, remarks);
+                ps.setInt(5, caregiverId);
+                ps.setInt(6, bookingId);
+                ps.executeUpdate();
+            }
 
-            ps.setDate(1, scheduledDate);
-            ps.setTime(2, scheduledTime);
-            ps.setDouble(3, gstRate);
-            ps.setString(4, remarks);
-            ps.setInt(5, bookingId);
-
-            ps.executeUpdate();
+            // ===== 3. Insert service_status for caregiver =====
+            String statusSql = "INSERT INTO service_status (booking_id, status, updated_at) VALUES (?, 'Scheduled', NOW())";
+            try (PreparedStatement psStatus = conn.prepareStatement(statusSql)) {
+                psStatus.setInt(1, bookingId);
+                psStatus.executeUpdate();
+            }
         }
     }
+
+
+
 }
