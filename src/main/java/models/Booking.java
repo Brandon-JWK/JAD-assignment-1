@@ -14,6 +14,7 @@ public class Booking {
     private Time scheduledTime;
     private double gstRate;
     private String remarks;
+    private String clientName;
 
     public Booking() {}
 
@@ -86,5 +87,12 @@ public class Booking {
 
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
+	}
+	public String getClientName() {
+	    return clientName;
+	}
+
+	public void setClientName(String clientName) {
+	    this.clientName = clientName;
 	}
 }

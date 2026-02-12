@@ -3,7 +3,7 @@
 
 <%@ include file="../includes/header.jsp" %>
 <%@ include file="../includes/navbar.jsp" %>
-
+<%@ include file="../includes/adminSessionCheck.jsp" %>
 <div class="client-page">
   <div class="container mt-5" style="max-width: 1100px;">
 
