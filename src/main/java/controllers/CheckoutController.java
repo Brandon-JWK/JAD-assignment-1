@@ -4,6 +4,10 @@ import dao.BookingDao;
 import dao.CartDao;
 import models.Client;
 import models.Service;
+import dao.PromotionDao;
+import models.Promotion;
+import models.PriceSummary;
+import util.PricingUtil;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -24,6 +28,7 @@ public class CheckoutController extends HttpServlet {
 
     private final CartDao cartDao = new CartDao();
     private final BookingDao bookingDao = new BookingDao();
+    private final PromotionDao promoDao = new PromotionDao();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -37,6 +42,12 @@ public class CheckoutController extends HttpServlet {
 
         Client client = (Client) session.getAttribute("client");
         int clientId = client.getClientId();
+        
+        String promoError = (String) session.getAttribute("promoError");
+        if (promoError != null) {
+            request.setAttribute("promoError", promoError);
+            session.removeAttribute("promoError");
+        }
 
         // 1) Find pending booking id
         Integer pendingBookingId = cartDao.getPendingBookingId(clientId);
@@ -45,31 +56,55 @@ public class CheckoutController extends HttpServlet {
             return;
         }
 
-        // 2) Load cart items from DB
+        // 2) Load cart items from DB (for display)
         List<Service> items = cartDao.getCartItems(clientId);
         if (items == null || items.isEmpty()) {
             response.sendRedirect(request.getContextPath() + "/booking/viewCart.jsp");
             return;
         }
 
-        // 3) Compute subtotal
-        BigDecimal subtotal = BigDecimal.ZERO;
-        for (Service s : items) {
-            subtotal = subtotal.add(BigDecimal.valueOf(s.getPrice()));
+        try {
+            // Ensure booking_details has correct quantity + unit_price (fixes any 0.00)
+            bookingDao.fillBookingDetailsPricing(pendingBookingId);
+
+            // 3) Compute subtotal from booking_details (more accurate than summing items)
+            BigDecimal bookingSubtotal = bookingDao.calculateSubtotal(pendingBookingId);
+
+            // 4) Promo validation (from session)
+            String promoCode = (String) session.getAttribute("promoCode");
+            Promotion appliedPromo = null;
+
+            if (promoCode != null && !promoCode.isBlank()) {
+                appliedPromo = promoDao.getValidPromoByCode(promoCode, bookingSubtotal.doubleValue());
+                if (appliedPromo == null) {
+                    session.removeAttribute("promoCode"); // invalid/expired
+                }
+            }
+
+            if (appliedPromo == null) {
+                session.removeAttribute("promoCode");
+            }
+
+            // 5) Compute final breakdown
+            PriceSummary summary = PricingUtil.compute(bookingSubtotal, GST_RATE, appliedPromo);
+
+            // 6) Pass to JSP
+            request.setAttribute("bookingId", pendingBookingId);
+            request.setAttribute("items", items);
+
+            request.setAttribute("subtotal", summary.getSubtotal());
+            request.setAttribute("discount", summary.getDiscount());
+            request.setAttribute("gst", summary.getGst());
+            request.setAttribute("total", summary.getTotal());
+            request.setAttribute("promo", summary.getPromo());
+
+            request.getRequestDispatcher("/booking/checkout.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            throw new ServletException("Failed to load checkout summary.", e);
         }
-
-        BigDecimal gst = subtotal.multiply(GST_RATE).setScale(2, RoundingMode.HALF_UP);
-        BigDecimal total = subtotal.add(gst).setScale(2, RoundingMode.HALF_UP);
-
-        request.setAttribute("bookingId", pendingBookingId);
-        request.setAttribute("items", items);
-        request.setAttribute("subtotal", subtotal.setScale(2, RoundingMode.HALF_UP));
-        request.setAttribute("gst", gst);
-        request.setAttribute("total", total);
-
-        request.getRequestDispatcher("/booking/checkout.jsp").forward(request, response);
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -104,13 +139,50 @@ public class CheckoutController extends HttpServlet {
         String remarks = request.getParameter("remarks");
 
         try {
-            // 1) Snapshot unit_price + quantity into booking_details (fixes your 0.00 issue)
+            // 1) Snapshot pricing in booking_details
             bookingDao.fillBookingDetailsPricing(pendingBookingId);
 
-            // 2) Confirm the pending booking + store schedule/gst/remarks
-            bookingDao.confirmBooking(pendingBookingId, scheduledDate, scheduledTime, GST_RATE.doubleValue(), remarks);
+            // 2) Confirm booking (your existing logic)
+            bookingDao.confirmBooking(
+                    pendingBookingId,
+                    scheduledDate,
+                    scheduledTime,
+                    GST_RATE.doubleValue(),
+                    remarks
+            );
 
-            response.sendRedirect(request.getContextPath() + "/booking/bookingSuccess.jsp?bookingId=" + pendingBookingId);
+            // 3) Compute subtotal from booking_details (more accurate than items list)
+            BigDecimal bookingSubtotal = bookingDao.calculateSubtotal(pendingBookingId);
+
+            // 4) Validate promo (if any)
+            String promoCode = (String) session.getAttribute("promoCode");
+            Promotion appliedPromo = null;
+
+            if (promoCode != null && !promoCode.isBlank()) {
+                appliedPromo = promoDao.getValidPromoByCode(promoCode, bookingSubtotal.doubleValue());
+                if (appliedPromo == null) {
+                    session.removeAttribute("promoCode"); // invalid/expired
+                }
+            }
+
+            // 5) Compute final amounts (subtotal - discount + GST)
+            PriceSummary summary = PricingUtil.compute(bookingSubtotal, GST_RATE, appliedPromo);
+
+            // 6) SAVE to booking table (this is the “advanced feature” audit trail)
+            bookingDao.updateBookingAmountsAndPromo(
+                    pendingBookingId,
+                    (appliedPromo != null ? appliedPromo.getPromoId() : null),
+                    summary.getSubtotal(),
+                    summary.getDiscount(),
+                    summary.getGst(),
+                    summary.getTotal()
+            );
+
+            // Optional: clear promo after checkout confirm
+            // session.removeAttribute("promoCode");
+
+            response.sendRedirect(request.getContextPath()
+                    + "/booking/bookingSuccess.jsp?bookingId=" + pendingBookingId);
 
         } catch (Exception e) {
             throw new ServletException("Checkout failed: unable to confirm booking.", e);

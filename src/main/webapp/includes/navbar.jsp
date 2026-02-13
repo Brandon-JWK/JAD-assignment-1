@@ -58,19 +58,19 @@
 		    </li>
 		    
 		    <!-- Caregiver: login or dashboard -->
-<li class="nav-item">
-  <% 
-      if (caregiver != null) { 
-  %>
-    <a class="nav-link" href="<%=request.getContextPath() %>/caregiver/caregiverDashboard.jsp">
-      Caregiver Dashboard
-    </a>
-  <% } else { %>
-    <a class="nav-link" href="<%=request.getContextPath() %>/caregiver/caregiverLogin.jsp">
-      Caregiver Login
-    </a>
-  <% } %>
-</li>
+			<li class="nav-item">
+			  <% 
+			      if (caregiver != null) { 
+			  %>
+			    <a class="nav-link" href="<%=request.getContextPath() %>/caregiver/caregiverDashboard.jsp">
+			      Caregiver Dashboard
+			    </a>
+			  <% } else { %>
+			    <a class="nav-link" href="<%=request.getContextPath() %>/caregiver/caregiverLogin.jsp">
+			      Caregiver Login
+			    </a>
+			  <% } %>
+			</li>
 		    
 			<li class="nav-item">
 			    <form action="<%=request.getContextPath() %>/AuthController" method="post">
@@ -81,4 +81,12 @@
 		  </ul>
 	   </div>
 	</nav>
+	<%
+	  models.Promotion p = (models.Promotion) request.getAttribute("activePromo");
+	  if (p != null) {
+	%>
+	  <div class="text-center py-2" style="background: var(--brandPrimary); color: white;">
+	    <b><%= (p.getBannerText() != null && !p.getBannerText().isBlank()) ? p.getBannerText() : p.getTitle() %></b>
+	  </div>
+	<% } %>
 </div>

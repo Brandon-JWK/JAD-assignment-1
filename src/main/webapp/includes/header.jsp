@@ -6,4 +6,15 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/includes.css?v=1">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/admin.css?v=3">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/assets/css/client.css?v=1">
+    <%
+	  models.Promotion activePromo = (models.Promotion) request.getAttribute("activePromo");
+	  String primary = (activePromo != null && activePromo.getThemePrimary() != null) ? activePromo.getThemePrimary() : "#2c6bed";
+	  String accent  = (activePromo != null && activePromo.getThemeAccent()  != null) ? activePromo.getThemeAccent()  : "#ffb020";
+	%>
+	<style>
+	:root{
+	  --brandPrimary: <%= primary %>;
+	  --brandAccent: <%= accent %>;
+	}
+	</style>
 </head>

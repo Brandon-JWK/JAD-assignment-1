@@ -7,6 +7,7 @@ import util.DB;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.math.BigDecimal;
 
 public class BookingDao {
 
@@ -256,7 +257,86 @@ public class BookingDao {
             }
         }
     }
+    
+    public BigDecimal calculateSubtotal(int bookingId) throws SQLException {
+        String sql = "SELECT COALESCE(SUM(quantity * unit_price), 0) AS subtotal " +
+                     "FROM booking_details WHERE booking_id=?";
+        try (Connection conn = DB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return BigDecimal.valueOf(rs.getDouble("subtotal"));
+            }
+        }
+        return BigDecimal.ZERO;
+    }
 
+    public void updateBookingAmountsAndPromo(
+            int bookingId,
+            Integer promoId,
+            BigDecimal subtotal,
+            BigDecimal discount,
+            BigDecimal gst,
+            BigDecimal total
+    ) throws SQLException {
 
+        String sql = "UPDATE booking SET promo_id=?, subtotal=?, discount_amount=?, gst_amount=?, total_amount=? " +
+                     "WHERE booking_id=?";
 
+        try (Connection conn = DB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            if (promoId == null) ps.setNull(1, Types.INTEGER);
+            else ps.setInt(1, promoId);
+
+            ps.setBigDecimal(2, subtotal);
+            ps.setBigDecimal(3, discount);
+            ps.setBigDecimal(4, gst);
+            ps.setBigDecimal(5, total);
+            ps.setInt(6, bookingId);
+
+            ps.executeUpdate();
+        }
+    }
+
+    public void updatePaymentStatus(int bookingId, String status, String ref) throws SQLException {
+        String sql = "UPDATE booking SET payment_status=?, payment_ref=?, paid_at = CASE WHEN ?='PAID' THEN NOW() ELSE paid_at END " +
+                     "WHERE booking_id=?";
+        try (Connection conn = DB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setString(2, ref);
+            ps.setString(3, status);
+            ps.setInt(4, bookingId);
+            ps.executeUpdate();
+        }
+    }
+
+    public void insertPaymentTxn(int bookingId, String provider, String providerRef, BigDecimal amount, String currency, String status)
+            throws SQLException {
+
+        String sql = "INSERT INTO payment_transaction (booking_id, provider, provider_ref, amount, currency, status) " +
+                     "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            ps.setString(2, provider);
+            ps.setString(3, providerRef);
+            ps.setBigDecimal(4, amount);
+            ps.setString(5, currency);
+            ps.setString(6, status);
+            ps.executeUpdate();
+        }
+    }
+    
+    public void updatePaymentTxnStatusByRef(String providerRef, String status) throws SQLException {
+        String sql = "UPDATE payment_transaction SET status=? WHERE provider_ref=?";
+        try (Connection conn = DB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, status);
+            ps.setString(2, providerRef);
+            ps.executeUpdate();
+        }
+    }
 }
