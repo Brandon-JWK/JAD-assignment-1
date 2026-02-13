@@ -30,7 +30,9 @@
 
                 <div class="admin-form-card">
 
-                    <form action="<%=request.getContextPath()%>/ServiceController" method="post">
+                    <form action="<%=request.getContextPath()%>/ServiceController"
+      method="post"
+      enctype="multipart/form-data">
 
                         <input type="hidden" name="action" value="updateService">
                         <input type="hidden" name="serviceId" value="<%= service.getServiceId() %>">
@@ -70,12 +72,22 @@
                             </select>
                         </div>
 
-                        <!-- Image Path -->
                         <div class="form-group">
-                            <label>Image Path</label>
-                            <input type="text" name="imagePath" class="form-control"
-                                   value="<%= service.getImagePath() %>" placeholder=" ">
-                        </div>
+    <label>Current Image</label><br>
+    <img src="<%= request.getContextPath() + "/" + service.getImagePath() %>"
+         width="150"
+         style="margin-bottom:10px;">
+</div>
+
+<div class="form-group">
+    <label>Change Image (Optional)</label>
+    <input type="file" name="imageFile" class="form-control" accept="image/*">
+</div>
+
+<!-- Keep old image path hidden -->
+<input type="hidden" name="existingImagePath"
+       value="<%= service.getImagePath() %>">
+
 
                         <div class="mt-4">
                             <button type="submit" class="btn btn-primary">Save Changes</button>

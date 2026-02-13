@@ -80,32 +80,66 @@ public class CaregiverDao {
 
  // -------------------- BOOKINGS & SERVICE STATUS --------------------
     public boolean checkIn(int statusId) throws SQLException {
-        String sql = "UPDATE service_status " +
-                     "SET check_in_time = NOW(), status = 'In Progress' " +
-                     "WHERE status_id = ? AND check_in_time IS NULL";
+        String sqlStatus = "UPDATE service_status " +
+                           "SET check_in_time = NOW(), status = 'In Progress' " +
+                           "WHERE status_id = ? AND check_in_time IS NULL";
+        String sqlBooking = "UPDATE booking b " +
+                            "JOIN service_status ss ON b.booking_id = ss.booking_id " +
+                            "SET b.status = 'In Progress' " +
+                            "WHERE ss.status_id = ?";
 
-        try (Connection conn = DB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DB.getConnection()) {
+            conn.setAutoCommit(false); // transaction
 
-            ps.setInt(1, statusId);
-            int rows = ps.executeUpdate();
-            return rows > 0; // true if check-in succeeded
+            try (PreparedStatement ps1 = conn.prepareStatement(sqlStatus);
+                 PreparedStatement ps2 = conn.prepareStatement(sqlBooking)) {
+
+                ps1.setInt(1, statusId);
+                ps1.executeUpdate();
+
+                ps2.setInt(1, statusId);
+                ps2.executeUpdate();
+
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
         }
     }
+
 
     public boolean checkOut(int statusId) throws SQLException {
-        String sql = "UPDATE service_status " +
-                     "SET check_out_time = NOW(), status = 'Completed' " +
-                     "WHERE status_id = ? AND check_in_time IS NOT NULL AND check_out_time IS NULL";
+        String sqlStatus = "UPDATE service_status " +
+                           "SET check_out_time = NOW(), status = 'Completed' " +
+                           "WHERE status_id = ? AND check_in_time IS NOT NULL AND check_out_time IS NULL";
+        String sqlBooking = "UPDATE booking b " +
+                            "JOIN service_status ss ON b.booking_id = ss.booking_id " +
+                            "SET b.status = 'Completed' " +
+                            "WHERE ss.status_id = ?";
 
-        try (Connection conn = DB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection conn = DB.getConnection()) {
+            conn.setAutoCommit(false);
 
-            ps.setInt(1, statusId);
-            int rows = ps.executeUpdate();
-            return rows > 0; // true if check-out succeeded
+            try (PreparedStatement ps1 = conn.prepareStatement(sqlStatus);
+                 PreparedStatement ps2 = conn.prepareStatement(sqlBooking)) {
+
+                ps1.setInt(1, statusId);
+                ps1.executeUpdate();
+
+                ps2.setInt(1, statusId);
+                ps2.executeUpdate();
+
+                conn.commit();
+                return true;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            }
         }
     }
+
 
 
 

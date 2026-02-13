@@ -133,25 +133,44 @@ public class ClientController extends HttpServlet {
             // UPDATE PROFILE
             // =========================
             case "updateProfile":
+
                 int id = Integer.parseInt(request.getParameter("clientId"));
+
+                String fullName = request.getParameter("fullName");
+                String email = request.getParameter("email");
+                String phone = request.getParameter("phone");
+                String address = request.getParameter("address");
+                String emergencyName = request.getParameter("emergencyContactName");
+                String emergencyPhone = request.getParameter("emergencyContactPhone");
+                String medicalInfo = request.getParameter("medicalInfo");
 
                 Client updateClient = new Client(
                         id,
-                        request.getParameter("fullName"),
-                        request.getParameter("email"),
-                        "",
-                        request.getParameter("phone"),
-                        request.getParameter("address")
+                        fullName,
+                        email,
+                        "", // keep password unchanged
+                        phone,
+                        address,
+                        emergencyName,
+                        emergencyPhone,
+                        medicalInfo
                 );
 
                 if (dao.update(updateClient)) {
-                    Client freshClient = dao.getClientById(updateClient.getClientId());
+
+                    Client freshClient = dao.getClientById(id);
+
                     request.getSession().setAttribute("client", freshClient);
+
                     response.sendRedirect("client/clientProfile.jsp?success=1");
+
                 } else {
+
                     request.setAttribute("error", "Update failed");
-                    request.getRequestDispatcher("client/editClientProfile.jsp").forward(request, response);
+                    request.getRequestDispatcher("client/editClientProfile.jsp")
+                           .forward(request, response);
                 }
+
                 break;
 
             // =========================
