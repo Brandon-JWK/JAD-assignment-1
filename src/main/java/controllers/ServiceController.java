@@ -60,17 +60,51 @@ public class ServiceController extends HttpServlet {
 
 
         if ("updateService".equals(action)) {
+
+            int serviceId = Integer.parseInt(request.getParameter("serviceId"));
+            String serviceName = request.getParameter("serviceName");
+            String serviceDesc = request.getParameter("serviceDesc");
+            double price = Double.parseDouble(request.getParameter("price"));
+            int categoryId = Integer.parseInt(request.getParameter("categoryId"));
+
+            // Handle image upload
+            Part filePart = request.getPart("imageFile");
+
+            String imagePath;
+
+            if (filePart != null && filePart.getSize() > 0) {
+
+                String fileName = filePart.getSubmittedFileName();
+
+                String uploadPath = getServletContext().getRealPath("") + "images";
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdir();
+                }
+
+                filePart.write(uploadPath + File.separator + fileName);
+
+                imagePath = "images/" + fileName;
+
+            } else {
+                // No new image selected → keep old one
+                imagePath = request.getParameter("existingImagePath");
+            }
+
             Service s = new Service(
-                Integer.parseInt(request.getParameter("serviceId")),
-                request.getParameter("serviceName"),
-                request.getParameter("serviceDesc"),
-                Double.parseDouble(request.getParameter("price")),
-                Integer.parseInt(request.getParameter("categoryId")),
-                request.getParameter("imagePath")
+                    serviceId,
+                    serviceName,
+                    serviceDesc,
+                    price,
+                    categoryId,
+                    imagePath
             );
+
             dao.updateService(s);
+
             response.sendRedirect("admin/services/adminListServices.jsp");
         }
+
 
         if ("deleteService".equals(action)) {
             int id = Integer.parseInt(request.getParameter("serviceId"));

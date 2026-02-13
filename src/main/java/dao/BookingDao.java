@@ -221,38 +221,54 @@ public class BookingDao {
         }
     }
 
-    public void confirmBooking(int bookingId, Date scheduledDate, Time scheduledTime, double gstRate, String remarks) throws SQLException {
-        try (Connection conn = DB.getConnection()) {
+    public void confirmBooking(int bookingId, Date scheduledDate, Time scheduledTime,
+            double gstRate, String remarks) throws SQLException {
 
-            int caregiverId = 0;
-            String caregiverSql = "SELECT caregiver_id FROM caregiver ORDER BY caregiver_id LIMIT 1";
-            try (PreparedStatement psCare = conn.prepareStatement(caregiverSql);
-                 ResultSet rs = psCare.executeQuery()) {
-                if (rs.next()) {
-                    caregiverId = rs.getInt("caregiver_id");
-                } else {
-                    throw new SQLException("No caregiver available to assign.");
-                }
-            }
+try (Connection conn = DB.getConnection()) {
 
-            String sql = "UPDATE booking SET status = 'Confirmed', scheduled_date = ?, scheduled_time = ?, gst_rate = ?, remarks = ?, caregiver_id = ? WHERE booking_id = ?";
-            try (PreparedStatement ps = conn.prepareStatement(sql)) {
-                ps.setDate(1, scheduledDate);
-                ps.setTime(2, scheduledTime);
-                ps.setDouble(3, gstRate);
-                ps.setString(4, remarks);
-                ps.setInt(5, caregiverId);
-                ps.setInt(6, bookingId);
-                ps.executeUpdate();
-            }
+int caregiverId = 0;
+String caregiverSql = "SELECT caregiver_id FROM caregiver ORDER BY caregiver_id LIMIT 1";
 
-            String statusSql = "INSERT INTO service_status (booking_id, status, updated_at) VALUES (?, 'Scheduled', NOW())";
-            try (PreparedStatement psStatus = conn.prepareStatement(statusSql)) {
-                psStatus.setInt(1, bookingId);
-                psStatus.executeUpdate();
-            }
-        }
-    }
+try (PreparedStatement psCare = conn.prepareStatement(caregiverSql);
+ResultSet rs = psCare.executeQuery()) {
+
+if (rs.next()) {
+ caregiverId = rs.getInt("caregiver_id");
+} else {
+ throw new SQLException("No caregiver available to assign.");
+}
+}
+
+// 1️⃣ Update booking
+String sql = "UPDATE booking SET status = 'Confirmed', " +
+      "scheduled_date = ?, scheduled_time = ?, gst_rate = ?, " +
+      "remarks = ?, caregiver_id = ? WHERE booking_id = ?";
+
+try (PreparedStatement ps = conn.prepareStatement(sql)) {
+ps.setDate(1, scheduledDate);
+ps.setTime(2, scheduledTime);
+ps.setDouble(3, gstRate);
+ps.setString(4, remarks);
+ps.setInt(5, caregiverId);
+ps.setInt(6, bookingId);
+ps.executeUpdate();
+}
+
+// 2️⃣ Insert OR update service_status safely
+String statusSql =
+"INSERT INTO service_status (booking_id, status, updated_at) " +
+"VALUES (?, 'Scheduled', NOW()) " +
+"ON DUPLICATE KEY UPDATE " +
+"status = VALUES(status), " +
+"updated_at = NOW()";
+
+try (PreparedStatement psStatus = conn.prepareStatement(statusSql)) {
+psStatus.setInt(1, bookingId);
+psStatus.executeUpdate();
+}
+}
+}
+
 
     public BigDecimal calculateSubtotal(int bookingId) throws SQLException {
         String sql = "SELECT COALESCE(SUM(quantity * unit_price), 0) AS subtotal FROM booking_details WHERE booking_id=?";
