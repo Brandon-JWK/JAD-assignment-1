@@ -49,6 +49,15 @@
        class="list-group-item list-group-item-action py-3 text-info fw-bold">
         View Real-time Service Status
     </a>
+    <a href="<%= request.getContextPath() %>/booking/viewCart.jsp"
+   class="list-group-item list-group-item-action py-3">
+    View Cart 
+    <% if (cartCount > 0) { %>
+        <span class="badge bg-danger float-end">
+            <%= cartCount %>
+        </span>
+    <% } %>
+</a>
 	
 	        </div>
 	

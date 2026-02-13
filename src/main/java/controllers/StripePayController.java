@@ -45,11 +45,22 @@ public class StripePayController extends HttpServlet {
         Client client = (Client) session.getAttribute("client");
         int clientId = client.getClientId();
 
-        Integer bookingId = cartDao.getPendingBookingId(clientId);
-        if (bookingId == null) {
-            response.sendRedirect(request.getContextPath() + "/booking/viewCart.jsp");
-            return;
-        }
+        Integer bookingId = null;
+
+     // First: check if bookingId was sent (Pay Later flow)
+     String bookingIdParam = request.getParameter("bookingId");
+     if (bookingIdParam != null && !bookingIdParam.isBlank()) {
+         bookingId = Integer.parseInt(bookingIdParam);
+     } 
+     // Otherwise: use cart flow
+     else {
+         bookingId = cartDao.getPendingBookingId(clientId);
+     }
+
+     if (bookingId == null) {
+         response.sendRedirect(request.getContextPath() + "/booking/viewCart.jsp");
+         return;
+     }
 
         // Read schedule + remarks (same fields as your checkout form)
         Date scheduledDate = null;
@@ -136,8 +147,16 @@ public class StripePayController extends HttpServlet {
             Session stripeSession = Session.create(params);
 
             // 7) Record payment status + txn
+//            bookingDao.updatePaymentStatus(bookingId, "PENDING", stripeSession.getId());
+//            bookingDao.insertPaymentTxn(bookingId, "STRIPE", stripeSession.getId(), summary.getTotal(), "SGD", "PENDING");
+         // Always update booking.payment_status to PENDING (link with current Stripe session)
             bookingDao.updatePaymentStatus(bookingId, "PENDING", stripeSession.getId());
-            bookingDao.insertPaymentTxn(bookingId, "STRIPE", stripeSession.getId(), summary.getTotal(), "SGD", "PENDING");
+
+            // Only insert new payment txn if no existing PENDING txn for this booking
+            boolean pendingExists = bookingDao.checkPaymentTxnExistsForBookingAndStatus(bookingId, "PENDING");
+            if (!pendingExists) {
+                bookingDao.insertPaymentTxn(bookingId, "STRIPE", stripeSession.getId(), summary.getTotal(), "SGD", "PENDING");
+            }
 
             // 8) Redirect to Stripe hosted checkout
             response.sendRedirect(stripeSession.getUrl());
