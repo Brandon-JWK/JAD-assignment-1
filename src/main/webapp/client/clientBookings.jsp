@@ -44,11 +44,23 @@
 				<td><c:out value="${b.remarks}" default="-" /></td>
 
                 <td>
-                  <a class="btn btn-client-secondary btn-sm w-100"
-                     href="<c:url value='/ClientController?action=viewBookingDetails&bookingId=${b.bookingId}'/>">
-                    Details
-                  </a>
-                </td>
+    <a class="btn btn-client-secondary btn-sm w-100 mb-1"
+       href="<c:url value='/ClientController?action=viewBookingDetails&bookingId=${b.bookingId}'/>">
+        Details
+    </a>
+
+    <c:if test="${b.paymentStatus == 'PENDING'}">
+  <form method="post" action="<c:url value='/booking/payStripe'/>">
+      <input type="hidden" name="bookingId" value="${b.bookingId}"/>
+      <button type="submit" class="btn btn-success btn-sm w-100">
+          Pay Now
+      </button>
+  </form>
+</c:if>
+
+
+</td>
+                
               </tr>
             </c:forEach>
           </tbody>

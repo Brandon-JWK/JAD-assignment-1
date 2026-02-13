@@ -82,12 +82,11 @@ public class BookingDao {
     public List<Booking> getBookingsByClientId(int clientId) throws SQLException {
         List<Booking> list = new ArrayList<>();
 
-        // Try selecting schedule fields; fallback if not exist
-        String sqlNew = "SELECT booking_id, client_id, created_at, status, scheduled_date, scheduled_time, gst_rate, remarks " +
+        // Try selecting schedule fields + payment_status; fallback if not exist
+        String sqlNew = "SELECT booking_id, client_id, created_at, status, scheduled_date, scheduled_time, gst_rate, remarks, payment_status " +
                         "FROM booking WHERE client_id=? ORDER BY created_at DESC";
 
-        String sqlOld = "SELECT booking_id, client_id, created_at, status " +
-                        "FROM booking WHERE client_id=? ORDER BY created_at DESC";
+        String sqlOld = "SELECT booking_id, client_id, created_at, status FROM booking WHERE client_id=? ORDER BY created_at DESC";
 
         try (Connection conn = DB.getConnection()) {
             try (PreparedStatement ps = conn.prepareStatement(sqlNew)) {
@@ -104,6 +103,7 @@ public class BookingDao {
                         b.setScheduledTime(rs.getTime("scheduled_time"));
                         b.setGstRate(rs.getDouble("gst_rate"));
                         b.setRemarks(rs.getString("remarks"));
+                        b.setPaymentStatus(rs.getString("payment_status")); // NEW
                         list.add(b);
                     }
                 }
@@ -118,6 +118,7 @@ public class BookingDao {
                                     rs.getTimestamp("created_at"),
                                     rs.getString("status")
                             );
+                            b.setPaymentStatus("PENDING"); // Default for old schema
                             list.add(b);
                         }
                     }
@@ -126,46 +127,45 @@ public class BookingDao {
         }
         return list;
     }
-    
-    public Booking getBookingByBookingId(int booking) {
-		Booking bookingObj = null;
 
-		String sql = "SELECT booking_id, client_id, created_at, status, scheduled_date, scheduled_time, gst_rate, remarks " +
-					 "FROM booking WHERE booking_id=?";
+    public Booking getBookingByBookingId(int bookingId) {
+        Booking bookingObj = null;
 
-		try (Connection conn = DB.getConnection();
-			 PreparedStatement ps = conn.prepareStatement(sql)) {
+        String sql = "SELECT booking_id, client_id, created_at, status, scheduled_date, scheduled_time, gst_rate, remarks, payment_status " +
+                     "FROM booking WHERE booking_id=?";
 
-			ps.setInt(1, booking);
-			try (ResultSet rs = ps.executeQuery()) {
-				if (rs.next()) {
-					bookingObj = new Booking(
-							rs.getInt("booking_id"),
-							rs.getInt("client_id"),
-							rs.getTimestamp("created_at"),
-							rs.getString("status")
-					);
-					bookingObj.setScheduledDate(rs.getDate("scheduled_date"));
-					bookingObj.setScheduledTime(rs.getTime("scheduled_time"));
-					bookingObj.setGstRate(rs.getDouble("gst_rate"));
-					bookingObj.setRemarks(rs.getString("remarks"));
-				}
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return bookingObj;
-	}
+        try (Connection conn = DB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, bookingId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    bookingObj = new Booking(
+                            rs.getInt("booking_id"),
+                            rs.getInt("client_id"),
+                            rs.getTimestamp("created_at"),
+                            rs.getString("status")
+                    );
+                    bookingObj.setScheduledDate(rs.getDate("scheduled_date"));
+                    bookingObj.setScheduledTime(rs.getTime("scheduled_time"));
+                    bookingObj.setGstRate(rs.getDouble("gst_rate"));
+                    bookingObj.setRemarks(rs.getString("remarks"));
+                    bookingObj.setPaymentStatus(rs.getString("payment_status")); // NEW
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return bookingObj;
+    }
 
     public List<BookingDetail> getBookingDetailsWithServiceName(int bookingId) throws SQLException {
         List<BookingDetail> list = new ArrayList<>();
 
-        // Try new schema with quantity/unit_price
         String sqlNew = "SELECT bd.detail_id, bd.booking_id, bd.service_id, bd.quantity, bd.unit_price, s.service_name " +
                         "FROM booking_details bd JOIN service s ON s.service_id = bd.service_id " +
                         "WHERE bd.booking_id=? ORDER BY bd.detail_id ASC";
 
-        // Old schema
         String sqlOld = "SELECT bd.detail_id, bd.booking_id, bd.service_id, s.service_name " +
                         "FROM booking_details bd JOIN service s ON s.service_id = bd.service_id " +
                         "WHERE bd.booking_id=? ORDER BY bd.detail_id ASC";
@@ -205,9 +205,8 @@ public class BookingDao {
         }
         return list;
     }
-    
+
     public void fillBookingDetailsPricing(int bookingId) throws SQLException {
-        // Set quantity to 1 if null/0 and set unit_price from service.price if 0 or null
         String sql =
             "UPDATE booking_details bd " +
             "JOIN service s ON bd.service_id = s.service_id " +
@@ -221,11 +220,10 @@ public class BookingDao {
             ps.executeUpdate();
         }
     }
-    
+
     public void confirmBooking(int bookingId, Date scheduledDate, Time scheduledTime, double gstRate, String remarks) throws SQLException {
         try (Connection conn = DB.getConnection()) {
 
-            // ===== 1. Choose a caregiver (simplest: first available) =====
             int caregiverId = 0;
             String caregiverSql = "SELECT caregiver_id FROM caregiver ORDER BY caregiver_id LIMIT 1";
             try (PreparedStatement psCare = conn.prepareStatement(caregiverSql);
@@ -237,7 +235,6 @@ public class BookingDao {
                 }
             }
 
-            // ===== 2. Update booking with status, schedule, gst, remarks, caregiver =====
             String sql = "UPDATE booking SET status = 'Confirmed', scheduled_date = ?, scheduled_time = ?, gst_rate = ?, remarks = ?, caregiver_id = ? WHERE booking_id = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 ps.setDate(1, scheduledDate);
@@ -249,7 +246,6 @@ public class BookingDao {
                 ps.executeUpdate();
             }
 
-            // ===== 3. Insert service_status for caregiver =====
             String statusSql = "INSERT INTO service_status (booking_id, status, updated_at) VALUES (?, 'Scheduled', NOW())";
             try (PreparedStatement psStatus = conn.prepareStatement(statusSql)) {
                 psStatus.setInt(1, bookingId);
@@ -257,10 +253,9 @@ public class BookingDao {
             }
         }
     }
-    
+
     public BigDecimal calculateSubtotal(int bookingId) throws SQLException {
-        String sql = "SELECT COALESCE(SUM(quantity * unit_price), 0) AS subtotal " +
-                     "FROM booking_details WHERE booking_id=?";
+        String sql = "SELECT COALESCE(SUM(quantity * unit_price), 0) AS subtotal FROM booking_details WHERE booking_id=?";
         try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, bookingId);
@@ -280,8 +275,7 @@ public class BookingDao {
             BigDecimal total
     ) throws SQLException {
 
-        String sql = "UPDATE booking SET promo_id=?, subtotal=?, discount_amount=?, gst_amount=?, total_amount=? " +
-                     "WHERE booking_id=?";
+        String sql = "UPDATE booking SET promo_id=?, subtotal=?, discount_amount=?, gst_amount=?, total_amount=? WHERE booking_id=?";
 
         try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -300,8 +294,7 @@ public class BookingDao {
     }
 
     public void updatePaymentStatus(int bookingId, String status, String ref) throws SQLException {
-        String sql = "UPDATE booking SET payment_status=?, payment_ref=?, paid_at = CASE WHEN ?='PAID' THEN NOW() ELSE paid_at END " +
-                     "WHERE booking_id=?";
+        String sql = "UPDATE booking SET payment_status=?, payment_ref=?, paid_at = CASE WHEN ?='PAID' THEN NOW() ELSE paid_at END WHERE booking_id=?";
         try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, status);
@@ -315,8 +308,7 @@ public class BookingDao {
     public void insertPaymentTxn(int bookingId, String provider, String providerRef, BigDecimal amount, String currency, String status)
             throws SQLException {
 
-        String sql = "INSERT INTO payment_transaction (booking_id, provider, provider_ref, amount, currency, status) " +
-                     "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO payment_transaction (booking_id, provider, provider_ref, amount, currency, status) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = DB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -329,7 +321,7 @@ public class BookingDao {
             ps.executeUpdate();
         }
     }
-    
+
     public void updatePaymentTxnStatusByRef(String providerRef, String status) throws SQLException {
         String sql = "UPDATE payment_transaction SET status=? WHERE provider_ref=?";
         try (Connection conn = DB.getConnection();
@@ -339,4 +331,17 @@ public class BookingDao {
             ps.executeUpdate();
         }
     }
+    public boolean checkPaymentTxnExistsForBookingAndStatus(int bookingId, String status) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM payment_transaction WHERE booking_id=? AND status=?";
+        try (Connection conn = DB.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, bookingId);
+            ps.setString(2, status);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) return rs.getInt(1) > 0;
+            }
+        }
+        return false;
+    }
+
 }
